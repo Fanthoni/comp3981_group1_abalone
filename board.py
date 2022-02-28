@@ -9,7 +9,8 @@ class BoardTile(Enum):
 
 class StartingPositions(Enum):
     DEFAULT = auto()
-    GERMAN
+    GERMAN = auto()
+    BELGIAN = auto()
 
 
 class Board:
@@ -85,7 +86,14 @@ class Board:
 
         return my_board
 
-my_char = "U+1F600"
-print(my_char)
+
+# print("|","\U0001F34C")
+# print("","\U0001F34E")
+# print("\U0001F34E")
+# print("\U0001F735")
+print(BoardTile.BORDER.value)
+print(BoardTile.BLUE.value)
+print(BoardTile.RED.value)
+print(BoardTile.EMPTY.value)
 # new_char = ord("J") + 1
 # print(chr(new_char))
