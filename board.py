@@ -235,7 +235,3 @@ class Board:
 
         # Prints the last row label
         print(" " * 14 + "1  2  3  4  5")
-
-
-test = Board(StartingPositions.BELGIAN)
-test.print_board()
