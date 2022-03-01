@@ -20,7 +20,7 @@ class StartingPositions(Enum):
 
 class Board:
     def __init__(self, board_choice):
-        self._board = Board.get_board(board_choice)
+        self._board = Board.make_board(board_choice)
         self._blue_score = 0
         self._red_score = 0
 
@@ -33,7 +33,7 @@ class Board:
         return self._board
 
     @classmethod
-    def get_board(cls, board_choice):
+    def make_board(cls, board_choice):
         """
         Get board state
         :param board_choice: a StartingPosition
@@ -164,10 +164,17 @@ class Board:
             }
         return board
 
+    def update_board(self, move):
+        """
+        Updates the current board state according to the move
+        :param move: a Move object
+        """
+        pass
+
     @classmethod
     def __get_indentation_space(cls, row):
         """
-        Helper function to print_board
+        Helper function to print_board formation
         :param row: a char
         :return: the number of spaces needed to be print before the BoardTile values
         """
@@ -191,17 +198,44 @@ class Board:
             case 'A':
                 return 10
 
+    @classmethod
+    def __get_column_label_value(cls, row):
+        """
+        Helper function to print_board labelling
+        :param row: a String row value
+        :return: a string with the current column label if exists. Empty string otherwise
+        """
+        match row:
+            case 'D':
+                return "9"
+            case 'C':
+                return "8"
+            case 'B':
+                return "7"
+            case 'A':
+                return "6"
+            case _:
+                return ""
+
     def print_board(self):
         """
         Prints the current board state
         """
-        for i in range(ord('I'), ord('@'), -1):
-            current_row = chr(i)
+        for row in range(ord('I'), ord('@'), -1):
+            current_row = chr(row)
             current_row_keys = sorted([key for key in self._board.keys() if current_row in key])
-            indent_space = Board.__get_indentation_space(current_row)
-            current_row_string_value = " " * indent_space
+            indent_space_amount = Board.__get_indentation_space(current_row)
+            current_row_string_value = " " * indent_space_amount + current_row
 
             for key in current_row_keys:
-                if self._board[key].value != BoardTile.BORDER:
+                if self._board[key].value is not BoardTile.BORDER:
                     current_row_string_value += self._board[key].value + " "
+            current_row_string_value += "\b" + Board.__get_column_label_value(current_row)
             print(current_row_string_value)
+
+        # Prints the last row label
+        print(" " * 14 + "1  2  3  4  5")
+
+
+test = Board(StartingPositions.BELGIAN)
+test.print_board()
