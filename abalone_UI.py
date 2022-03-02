@@ -40,19 +40,40 @@ class AbaloneUI:
                 case _:
                     print("Invalid")
 
-    def set_game_mode(self):
+    def set_starting_position(self):
+        """
+        Sets the starting position to one of three types.
+
+        :return: None
+        """
         AbaloneUI.print_game_options()
         user_input = input("Input: ")
 
         match user_input:
             case "1":
-                self.abalone.set_game_mode(StartingPositions.DEFAULT)
+                self.abalone.set_start_positions(StartingPositions.DEFAULT)
             case "2":
-                self.abalone.set_game_mode(StartingPositions.GERMAN)
+                self.abalone.set_start_positions(StartingPositions.GERMAN)
             case "3":
-                self.abalone.set_game_mode(StartingPositions.BELGIAN)
+                self.abalone.set_start_positions(StartingPositions.BELGIAN)
             case _:
                 print("Invalid")
+
+    def set_game_mode(self):
+        """
+        Sets game to be played against human or AI for both players.
+
+        :return: None
+        """
+        print("---Player 1---")
+        user_input = input("1. Human\n"
+                           "2. AI\n"
+                           "Input: ")
+
+        print("---Player 2---")
+        user_input = input("1. Human\n"
+                           "2. AI\n"
+                           "Input: ")
 
     def set_turn_lim(self):
         """
@@ -60,7 +81,11 @@ class AbaloneUI:
 
         :return: an int
         """
-        pass
+        print("---Player 1 Turn Limit---")
+        user_input = input("Input: ")
+
+        print("---Player 2 Turn Limit---")
+        user_input = input("Input: ")
 
     def set_turn_time(self):
         """
@@ -68,7 +93,12 @@ class AbaloneUI:
 
         :return: an int, time in seconds.
         """
-        pass
+        print("---Player 1 Time Limit---")
+        user_input = input("Input: ")
+        print(f"Player 1 ")
+
+        print("---Player 2 Time Limit---")
+        user_input = input("Input: ")
 
     def set_player_colour(self):
         """
@@ -76,7 +106,17 @@ class AbaloneUI:
 
         :return:f
         """
-        pass
+        print("---Player 1 Color---")
+        user_input = input("1. White\n"
+                           "2. Black\n"
+                           "Input: ")
+        p1 = "White"
+        p2 = "Black"
+
+        if user_input == "2":
+            p1, p2 = p2, p1
+
+        print(f"Player 1 set to {p1}, Player 2 automatically set to {p2}")
 
     @staticmethod
     def print_menu_options():
