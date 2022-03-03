@@ -235,3 +235,11 @@ class Board:
 
         # Prints the last row label
         print(" " * 14 + "1  2  3  4  5")
+
+    @property
+    def red_score(self):
+        return self._red_score
+
+    @property
+    def blue_score(self):
+        return self._blue_score

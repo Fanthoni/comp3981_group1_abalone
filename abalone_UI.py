@@ -20,7 +20,7 @@ class AbaloneUI:
         :return: None
         """
         user_input = -1
-        while not user_input == "6":
+        while not user_input == "7":
             AbaloneUI.print_menu_options()
             user_input = input("Input: ")
 
@@ -28,14 +28,16 @@ class AbaloneUI:
                 case "1":
                     self.abalone.start_game()
                 case "2":
-                    self.set_game_mode()
+                    self.set_starting_position()
                 case "3":
-                    self.set_player_colour()
+                    self.set_game_mode()
                 case "4":
-                    self.set_turn_time()
+                    self.set_player_colour()
                 case "5":
-                    self.set_turn_lim()
+                    self.set_turn_time()
                 case "6":
+                    self.set_turn_lim()
+                case "7":
                     pass
                 case _:
                     print("Invalid")
@@ -52,10 +54,14 @@ class AbaloneUI:
         match user_input:
             case "1":
                 self.abalone.set_start_positions(StartingPositions.DEFAULT)
+                print("Starting position changed to DEFAULT.")
             case "2":
                 self.abalone.set_start_positions(StartingPositions.GERMAN)
+                print("Starting position changed to GERMAN.")
+
             case "3":
                 self.abalone.set_start_positions(StartingPositions.BELGIAN)
+                print("Starting position changed to BELGIAN")
             case _:
                 print("Invalid")
 
@@ -66,14 +72,19 @@ class AbaloneUI:
         :return: None
         """
         print("---Player 1---")
-        user_input = input("1. Human\n"
-                           "2. AI\n"
-                           "Input: ")
+        user_input_p1 = input("1. Human\n"
+                              "2. AI\n"
+                              "Input: ")
 
         print("---Player 2---")
-        user_input = input("1. Human\n"
-                           "2. AI\n"
-                           "Input: ")
+        user_input_p2 = input("1. Human\n"
+                              "2. AI\n"
+                              "Input: ")
+
+        p1 = "AI" if user_input_p1 == "2" else "Human"
+        p2 = "AI" if user_input_p2 == "2" else "Human"
+
+        print(f"Player 1 set to {p1} and Player 2 set to {p2}")
 
     def set_turn_lim(self):
         """
@@ -83,9 +94,11 @@ class AbaloneUI:
         """
         print("---Player 1 Turn Limit---")
         user_input = input("Input: ")
+        print(f"Player 1's turn limit set to {user_input} turns.")
 
         print("---Player 2 Turn Limit---")
         user_input = input("Input: ")
+        print(f"Player 1's turn limit set to {user_input} turns.")
 
     def set_turn_time(self):
         """
@@ -95,10 +108,11 @@ class AbaloneUI:
         """
         print("---Player 1 Time Limit---")
         user_input = input("Input: ")
-        print(f"Player 1 ")
+        print(f"Player 1's time limit per turn set to {user_input} seconds.")
 
         print("---Player 2 Time Limit---")
         user_input = input("Input: ")
+        print(f"Player 2's time limit per turn set to {user_input} seconds.")
 
     def set_player_colour(self):
         """
@@ -123,10 +137,11 @@ class AbaloneUI:
         print("---Main Menu---")
         print("1. Start Game\n"
               "2. Set Starting Positions\n"
-              "3. Set Player Colors\n"
-              "4. Set Turn Time\n"
-              "5. Set Turn Limit\n"
-              "6. Exit")
+              "3. Set Game Mode\n"
+              "4. Set Player Colors\n"
+              "5. Set Turn Time\n"
+              "6. Set Turn Limit\n"
+              "7. Exit")
 
     @staticmethod
     def print_game_options():
