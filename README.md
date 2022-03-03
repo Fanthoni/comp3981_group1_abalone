@@ -1,8 +1,9 @@
 # Abalone - Group 1
 
 ### Setting Up and Running the Program
-This abalone program can be executed wherever emojis can be printed properly. Using pycharm
-IDE is recommended. 
+This abalone program can be executed wherever emojis can be printed properly. Using Windows Terminal or PyCharm IDE is recommended.
+
+Note: The Windows default console host (conhost.exe) does not support printing Unicode characters. However, the new Windows Terminal does.
 
 First, make sure to have python installed on the machine (version 3.10 is the latest python version when this README file is written).
 Then simply go to the root project directory and type 
