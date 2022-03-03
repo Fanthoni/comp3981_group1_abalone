@@ -8,8 +8,8 @@ class Abalone:
 
     def __init__(self):
         self._board = None
-        self._players = {"Black": None, "White": None}  # Player class not implemented yet
-        self._current_player = self._players["Black"]
+        self._players = {"Black": "Human", "White": "Human"}  # Player class not implemented yet
+        self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
         self._game_mode = StartingPositions.DEFAULT
@@ -21,19 +21,42 @@ class Abalone:
         """
         self.board = Board(self._game_mode)
         self.board.print_board()
+
+        if self._players["Black"] == "AI" and self._players["White"] == "AI":
+            print("We do not support two AIs playing against each other yet. Please reconfigure players.")
+            return
+
         while not self.is_game_stopped:
-            # Hacky for not, definitely will get changed when our Player class is implemented.
             # Our Player class will handle their own timers, moves, and previous moves.
-            print("---Player 1---")
-            self.player_moves()
 
-            if self.is_game_stopped:
-                break
-
-            print("---Player 2---")
-            self.player_moves()
+            if self._current_player == "Black":
+                if self._players.get("Black") == "AI":
+                    print("---Black (AI)---")
+                    self.ai_moves()
+                else:
+                    print("---Black (Player)---")
+                    self.player_moves()
+                self._current_player = "White"
+            elif self._current_player == "White":
+                if self._players.get("White") == "AI":
+                    print("---White (AI)---")
+                    self.ai_moves()
+                else:
+                    print("---White (Player)---")
+                    self.player_moves()
+                self._current_player = "Black"
 
         self.reset_game()
+
+    def ai_moves(self):
+        print("Time remaining: X")
+        print("Moves remaining: X")
+        print("Previous Moves: ...")
+        print("Next Move = X")
+        print("Time used to decide this move: X")
+
+        print("Black : 0 - 0 : White")  # Scoreboard
+        self.board.print_board()
 
     def player_moves(self):
         """
@@ -53,14 +76,17 @@ class Abalone:
                     print("Pieces moved! (Pretend it moved)")
                     print("Time taken for this move: X")
                     moved = True
+                    print("Black : 0 - 0 : White")  # Scoreboard
                     self.board.print_board()
                 case "2":
                     print("Previous moves: ...")
                 case "3":
+                    self.undo_last_move()
+                case "4":
                     self.pause_game()
                     input("Enter anything to resume: ")
                     self.resume_game()
-                case "4":
+                case "5":
                     self.stop_game()
                     break
 
@@ -72,8 +98,9 @@ class Abalone:
         """
         print("1. Make Move\n"
               "2. View Previous Moves\n"
-              "3. Pause Game\n"
-              "4. Stop Game")
+              "3. Undo Move\n"
+              "4. Pause Game\n"
+              "5. Stop Game")
 
     def color_selection(self):
         pass
@@ -98,7 +125,7 @@ class Abalone:
         Undo the last move made.
         :return:
         """
-        pass
+        print("Move undone!")
 
     def pause_game(self):
         """
@@ -174,6 +201,18 @@ class Abalone:
         """
         self._is_game_stopped = stopped
 
+    def set_player1(self, player):
+        """
+        Sets a player to black.
+        """
+        self._players["Black"] = player
+
+    def set_player2(self, player):
+        """
+        Sets a player to white.
+        """
+        self._players["White"] = player
+
     @property
     def board(self):
         return self._board
@@ -186,4 +225,3 @@ class Abalone:
 if __name__ == "__main__":
     abalone = Abalone()
     abalone.start_game()
-

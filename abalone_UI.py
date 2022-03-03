@@ -84,6 +84,12 @@ class AbaloneUI:
         p1 = "AI" if user_input_p1 == "2" else "Human"
         p2 = "AI" if user_input_p2 == "2" else "Human"
 
+        self.abalone.set_player1(p1)
+        print(self.abalone._players["Black"])
+        self.abalone.set_player2(p2)
+        print(self.abalone._players["White"])
+
+
         print(f"Player 1 set to {p1} and Player 2 set to {p2}")
 
     def set_turn_lim(self):
