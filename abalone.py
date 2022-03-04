@@ -221,7 +221,34 @@ class Abalone:
     def board(self, board):
         self._board = board
 
+    def setup_from_input_file(self, file_name):
+        """
+        Takes an input file as input, translates it into a board layout and sets a player to the current player.
+        :param file_name: input file
+
+        :return: None
+        """
+        self.board = Board(StartingPositions.EMPTY)
+        with open(file_name, 'r') as file:
+            data = file.readlines()
+            moves = data[1].strip('\n').split(',')
+
+        key = "White" if data[0].strip('\n') == "w" else "Black"
+        self._current_player = self._players[key]
+
+        self.board.setup_board_from_moves(moves)
+        print(f"{key}'s move (Black = Blue, White = Red)")
+        self.board.print_board()
+
+    def get_board_information(self):
+        """
+        Calls same method from board to get the board information.
+
+        :return: String
+        """
+        return self.board.get_board_information()
+
 
 if __name__ == "__main__":
     abalone = Abalone()
-    abalone.start_game()
+    abalone.setup_from_input_file("Test1.input")

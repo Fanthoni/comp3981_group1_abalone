@@ -16,6 +16,7 @@ class StartingPositions(Enum):
     DEFAULT = auto()
     GERMAN = auto()
     BELGIAN = auto()
+    EMPTY = auto()
 
 
 class Board:
@@ -41,126 +42,143 @@ class Board:
         """
         board = None
         # Default board state
-        if board_choice == StartingPositions.DEFAULT:
+        if board_choice == StartingPositions.EMPTY:
             board = {
-                ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER, ('J', 7): BoardTile.BORDER,
-                ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER, ('J', 10): BoardTile.BORDER,
-
-                ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.RED, ('I', 6): BoardTile.RED, ('I', 7): BoardTile.RED,
-                ('I', 8): BoardTile.RED, ('I', 9): BoardTile.RED, ('I', 10): BoardTile.BORDER,
-                ('H', 3): BoardTile.BORDER, ('H', 4): BoardTile.RED, ('H', 5): BoardTile.RED, ('H', 6): BoardTile.RED,
-                ('H', 7): BoardTile.RED, ('H', 8): BoardTile.RED, ('H', 9): BoardTile.RED, ('H', 10): BoardTile.BORDER,
-                ('G', 2): BoardTile.BORDER, ('G', 3): BoardTile.EMPTY, ('G', 4): BoardTile.EMPTY,
-                ('G', 5): BoardTile.RED, ('G', 6): BoardTile.RED, ('G', 7): BoardTile.RED, ('G', 8): BoardTile.EMPTY,
-                ('G', 9): BoardTile.EMPTY, ('G', 10): BoardTile.BORDER,
-
-                ('F', 1): BoardTile.BORDER, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.EMPTY,
-                ('F', 4): BoardTile.EMPTY, ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY,
-                ('F', 7): BoardTile.EMPTY, ('F', 8): BoardTile.EMPTY, ('F', 9): BoardTile.EMPTY,
-                ('F', 10): BoardTile.BORDER,
-                ('E', 0): BoardTile.BORDER, ('E', 1): BoardTile.EMPTY, ('E', 2): BoardTile.EMPTY,
-                ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY, ('E', 5): BoardTile.EMPTY,
-                ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY, ('E', 8): BoardTile.EMPTY,
-                ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.BORDER,
-                ('D', 0): BoardTile.BORDER, ('D', 1): BoardTile.EMPTY, ('D', 2): BoardTile.EMPTY,
+                ('A', 0): BoardTile.EMPTY, ('A', 1): BoardTile.EMPTY, ('A', 2): BoardTile.EMPTY,
+                ('A', 3): BoardTile.EMPTY, ('A', 4): BoardTile.EMPTY, ('A', 5): BoardTile.EMPTY,
+                ('A', 6): BoardTile.EMPTY, ('B', 0): BoardTile.EMPTY, ('B', 1): BoardTile.EMPTY,
+                ('B', 2): BoardTile.EMPTY, ('B', 3): BoardTile.EMPTY, ('B', 4): BoardTile.EMPTY,
+                ('B', 5): BoardTile.EMPTY, ('B', 6): BoardTile.EMPTY, ('B', 7): BoardTile.EMPTY,
+                ('C', 0): BoardTile.EMPTY, ('C', 1): BoardTile.EMPTY, ('C', 2): BoardTile.EMPTY,
+                ('C', 3): BoardTile.EMPTY, ('C', 4): BoardTile.EMPTY, ('C', 5): BoardTile.EMPTY,
+                ('C', 6): BoardTile.EMPTY, ('C', 7): BoardTile.EMPTY, ('C', 8): BoardTile.EMPTY,
+                ('D', 0): BoardTile.EMPTY, ('D', 1): BoardTile.EMPTY, ('D', 2): BoardTile.EMPTY,
                 ('D', 3): BoardTile.EMPTY, ('D', 4): BoardTile.EMPTY, ('D', 5): BoardTile.EMPTY,
                 ('D', 6): BoardTile.EMPTY, ('D', 7): BoardTile.EMPTY, ('D', 8): BoardTile.EMPTY,
-                ('D', 9): BoardTile.BORDER,
-
-                ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.EMPTY, ('C', 2): BoardTile.EMPTY,
-                ('C', 3): BoardTile.BLUE, ('C', 4): BoardTile.BLUE, ('C', 5): BoardTile.BLUE, ('C', 6): BoardTile.EMPTY,
-                ('C', 7): BoardTile.EMPTY, ('C', 8): BoardTile.BORDER,
-                ('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE, ('B', 2): BoardTile.BLUE,
-                ('B', 3): BoardTile.BLUE, ('B', 4): BoardTile.BLUE, ('B', 5): BoardTile.BLUE, ('B', 6): BoardTile.BLUE,
-                ('B', 7): BoardTile.BORDER,
-                ('A', 0): BoardTile.BORDER, ('A', 1): BoardTile.BLUE, ('A', 2): BoardTile.BLUE,
-                ('A', 3): BoardTile.BLUE, ('A', 4): BoardTile.BLUE, ('A', 5): BoardTile.BLUE,
-                ('A', 6): BoardTile.BORDER,
-
-                ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER, ('@', 2): BoardTile.BORDER,
-                ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER, ('@', 5): BoardTile.BORDER
+                ('D', 9): BoardTile.EMPTY, ('E', 0): BoardTile.EMPTY, ('E', 1): BoardTile.EMPTY,
+                ('E', 2): BoardTile.EMPTY, ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY,
+                ('E', 5): BoardTile.EMPTY, ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY,
+                ('E', 8): BoardTile.EMPTY, ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.EMPTY,
+                ('F', 1): BoardTile.EMPTY, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.EMPTY,
+                ('F', 4): BoardTile.EMPTY, ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY,
+                ('F', 7): BoardTile.EMPTY, ('F', 8): BoardTile.EMPTY, ('F', 9): BoardTile.EMPTY,
+                ('F', 10): BoardTile.EMPTY, ('G', 2): BoardTile.EMPTY, ('G', 3): BoardTile.EMPTY,
+                ('G', 4): BoardTile.EMPTY, ('G', 5): BoardTile.EMPTY, ('G', 6): BoardTile.EMPTY,
+                ('G', 7): BoardTile.EMPTY, ('G', 8): BoardTile.EMPTY, ('G', 9): BoardTile.EMPTY,
+                ('G', 10): BoardTile.EMPTY, ('H', 3): BoardTile.EMPTY, ('H', 4): BoardTile.EMPTY,
+                ('H', 5): BoardTile.EMPTY, ('H', 6): BoardTile.EMPTY, ('H', 7): BoardTile.EMPTY,
+                ('H', 8): BoardTile.EMPTY, ('H', 9): BoardTile.EMPTY, ('H', 10): BoardTile.EMPTY,
+                ('I', 4): BoardTile.EMPTY, ('I', 5): BoardTile.EMPTY, ('I', 6): BoardTile.EMPTY,
+                ('I', 7): BoardTile.EMPTY, ('I', 8): BoardTile.EMPTY, ('I', 9): BoardTile.EMPTY,
+                ('I', 10): BoardTile.EMPTY, ('J', 5): BoardTile.EMPTY, ('J', 6): BoardTile.EMPTY,
+                ('J', 7): BoardTile.EMPTY, ('J', 8): BoardTile.EMPTY, ('J', 9): BoardTile.EMPTY,
+                ('J', 10): BoardTile.EMPTY, ('@', 0): BoardTile.EMPTY, ('@', 1): BoardTile.EMPTY,
+                ('@', 2): BoardTile.EMPTY, ('@', 3): BoardTile.EMPTY, ('@', 4): BoardTile.EMPTY,
+                ('@', 5): BoardTile.EMPTY
             }
         # Belgian Daisy state
         elif board_choice == StartingPositions.BELGIAN:
             board = {
-                ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER, ('J', 7): BoardTile.BORDER,
-                ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER, ('J', 10): BoardTile.BORDER,
-
-                ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.RED, ('I', 6): BoardTile.RED, ('I', 7): BoardTile.EMPTY,
-                ('I', 8): BoardTile.BLUE, ('I', 9): BoardTile.BLUE, ('I', 10): BoardTile.BORDER,
-                ('H', 3): BoardTile.BORDER, ('H', 4): BoardTile.RED, ('H', 5): BoardTile.RED, ('H', 6): BoardTile.RED,
-                ('H', 7): BoardTile.BLUE, ('H', 8): BoardTile.BLUE, ('H', 9): BoardTile.BLUE,
-                ('H', 10): BoardTile.BORDER,
-                ('G', 2): BoardTile.BORDER, ('G', 3): BoardTile.EMPTY, ('G', 4): BoardTile.RED, ('G', 5): BoardTile.RED,
-                ('G', 6): BoardTile.EMPTY, ('G', 7): BoardTile.BLUE, ('G', 8): BoardTile.BLUE,
-                ('G', 9): BoardTile.EMPTY, ('G', 10): BoardTile.BORDER,
-
-                ('F', 1): BoardTile.BORDER, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.EMPTY,
-                ('F', 4): BoardTile.EMPTY, ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY,
-                ('F', 7): BoardTile.EMPTY, ('F', 8): BoardTile.EMPTY, ('F', 9): BoardTile.EMPTY,
-                ('F', 10): BoardTile.BORDER,
-                ('E', 0): BoardTile.BORDER, ('E', 1): BoardTile.EMPTY, ('E', 2): BoardTile.EMPTY,
-                ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY, ('E', 5): BoardTile.EMPTY,
-                ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY, ('E', 8): BoardTile.EMPTY,
-                ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.BORDER,
+                ('A', 0): BoardTile.BORDER, ('A', 1): BoardTile.BLUE, ('A', 2): BoardTile.BLUE,
+                ('A', 3): BoardTile.EMPTY, ('A', 4): BoardTile.RED, ('A', 5): BoardTile.RED,
+                ('A', 6): BoardTile.BORDER,('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE,
+                ('B', 2): BoardTile.BLUE, ('B', 3): BoardTile.BLUE, ('B', 4): BoardTile.RED,
+                ('B', 5): BoardTile.RED, ('B', 6): BoardTile.RED, ('B', 7): BoardTile.BORDER,
+                ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.EMPTY, ('C', 2): BoardTile.BLUE,
+                ('C', 3): BoardTile.BLUE, ('C', 4): BoardTile.EMPTY, ('C', 5): BoardTile.RED,
+                ('C', 6): BoardTile.RED, ('C', 7): BoardTile.EMPTY, ('C', 8): BoardTile.BORDER,
                 ('D', 0): BoardTile.BORDER, ('D', 1): BoardTile.EMPTY, ('D', 2): BoardTile.EMPTY,
                 ('D', 3): BoardTile.EMPTY, ('D', 4): BoardTile.EMPTY, ('D', 5): BoardTile.EMPTY,
                 ('D', 6): BoardTile.EMPTY, ('D', 7): BoardTile.EMPTY, ('D', 8): BoardTile.EMPTY,
-                ('D', 9): BoardTile.BORDER,
-
-                ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.EMPTY, ('C', 2): BoardTile.BLUE, ('C', 3): BoardTile.BLUE,
-                ('C', 4): BoardTile.EMPTY, ('C', 5): BoardTile.RED, ('C', 6): BoardTile.RED,
-                ('C', 7): BoardTile.EMPTY, ('C', 8): BoardTile.BORDER,
-                ('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE, ('B', 2): BoardTile.BLUE, ('B', 3): BoardTile.BLUE,
-                ('B', 4): BoardTile.RED, ('B', 5): BoardTile.RED, ('B', 6): BoardTile.RED,
-                ('B', 7): BoardTile.BORDER,
-                ('A', 0): BoardTile.BORDER, ('A', 1): BoardTile.BLUE, ('A', 2): BoardTile.BLUE, ('A', 3): BoardTile.EMPTY,
-                ('A', 4): BoardTile.RED, ('A', 5): BoardTile.RED, ('A', 6): BoardTile.BORDER,
-
-                ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER, ('@', 2): BoardTile.BORDER,
-                ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER, ('@', 5): BoardTile.BORDER
+                ('D', 9): BoardTile.BORDER, ('E', 0): BoardTile.BORDER, ('E', 1): BoardTile.EMPTY,
+                ('E', 2): BoardTile.EMPTY, ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY,
+                ('E', 5): BoardTile.EMPTY, ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY,
+                ('E', 8): BoardTile.EMPTY, ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.BORDER,
+                ('F', 1): BoardTile.BORDER, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.EMPTY,
+                ('F', 4): BoardTile.EMPTY, ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY,
+                ('F', 7): BoardTile.EMPTY, ('F', 8): BoardTile.EMPTY, ('F', 9): BoardTile.EMPTY,
+                ('F', 10): BoardTile.BORDER, ('G', 2): BoardTile.BORDER, ('G', 3): BoardTile.EMPTY,
+                ('G', 4): BoardTile.RED, ('G', 5): BoardTile.RED, ('G', 6): BoardTile.EMPTY,
+                ('G', 7): BoardTile.BLUE, ('G', 8): BoardTile.BLUE, ('G', 9): BoardTile.EMPTY,
+                ('G', 10): BoardTile.BORDER, ('H', 3): BoardTile.BORDER, ('H', 4): BoardTile.RED,
+                ('H', 5): BoardTile.RED, ('H', 6): BoardTile.RED, ('H', 7): BoardTile.BLUE,
+                ('H', 8): BoardTile.BLUE, ('H', 9): BoardTile.BLUE, ('H', 10): BoardTile.BORDER,
+                ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.RED, ('I', 6): BoardTile.RED,
+                ('I', 7): BoardTile.EMPTY, ('I', 8): BoardTile.BLUE, ('I', 9): BoardTile.BLUE,
+                ('I', 10): BoardTile.BORDER,  ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER,
+                ('J', 7): BoardTile.BORDER, ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER,
+                ('J', 10): BoardTile.BORDER, ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER,
+                ('@', 2): BoardTile.BORDER, ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER,
+                ('@', 5): BoardTile.BORDER
             }
         # german daisy state
         elif board_choice == StartingPositions.GERMAN:
             board = {
-                ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER, ('J', 7): BoardTile.BORDER,
-                ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER, ('J', 10): BoardTile.BORDER,
-
-                ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.EMPTY, ('I', 6): BoardTile.EMPTY,
-                ('I', 7): BoardTile.EMPTY, ('I', 8): BoardTile.EMPTY, ('I', 9): BoardTile.EMPTY,
-                ('I', 10): BoardTile.BORDER,
-
-                ('H', 3): BoardTile.BORDER, ('H', 4): BoardTile.RED, ('H', 5): BoardTile.RED, ('H', 6): BoardTile.EMPTY,
-                ('H', 7): BoardTile.EMPTY, ('H', 8): BoardTile.BLUE, ('H', 9): BoardTile.BLUE,
-                ('H', 10): BoardTile.BORDER,
-                ('G', 2): BoardTile.BORDER, ('G', 3): BoardTile.RED, ('G', 4): BoardTile.RED, ('G', 5): BoardTile.RED,
-                ('G', 6): BoardTile.EMPTY, ('G', 7): BoardTile.BLUE, ('G', 8): BoardTile.BLUE, ('G', 9): BoardTile.BLUE,
-                ('G', 10): BoardTile.BORDER,
-                ('F', 1): BoardTile.BORDER, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.RED, ('F', 4): BoardTile.RED,
-                ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY, ('F', 7): BoardTile.BLUE,
-                ('F', 8): BoardTile.BLUE, ('F', 9): BoardTile.EMPTY, ('F', 10): BoardTile.BORDER,
-
-                ('E', 0): BoardTile.BORDER, ('E', 1): BoardTile.EMPTY, ('E', 2): BoardTile.EMPTY,
-                ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY, ('E', 5): BoardTile.EMPTY,
-                ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY, ('E', 8): BoardTile.EMPTY,
-                ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.BORDER,
-
-                ('D', 0): BoardTile.BORDER, ('D', 1): BoardTile.EMPTY, ('D', 2): BoardTile.BLUE, ('D', 3): BoardTile.BLUE,
-                ('D', 4): BoardTile.EMPTY, ('D', 5): BoardTile.EMPTY, ('D', 6): BoardTile.RED,
-                ('D', 7): BoardTile.RED, ('D', 8): BoardTile.EMPTY, ('D', 9): BoardTile.BORDER,
-                ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.BLUE, ('C', 2): BoardTile.BLUE, ('C', 3): BoardTile.BLUE,
-                ('C', 4): BoardTile.EMPTY, ('C', 5): BoardTile.RED, ('C', 6): BoardTile.RED, ('C', 7): BoardTile.RED,
-                ('C', 8): BoardTile.BORDER,
-                ('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE, ('B', 2): BoardTile.BLUE, ('B', 3): BoardTile.EMPTY,
-                ('B', 4): BoardTile.EMPTY, ('B', 5): BoardTile.RED, ('B', 6): BoardTile.RED,
-                ('B', 7): BoardTile.BORDER,
-
                 ('A', 0): BoardTile.BORDER, ('A', 1): BoardTile.EMPTY, ('A', 2): BoardTile.EMPTY,
                 ('A', 3): BoardTile.EMPTY, ('A', 4): BoardTile.EMPTY, ('A', 5): BoardTile.EMPTY,
-                ('A', 6): BoardTile.BORDER,
-
-                ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER, ('@', 2): BoardTile.BORDER,
-                ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER, ('@', 5): BoardTile.BORDER
+                ('A', 6): BoardTile.BORDER, ('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE,
+                ('B', 2): BoardTile.BLUE, ('B', 3): BoardTile.EMPTY, ('B', 4): BoardTile.EMPTY,
+                ('B', 5): BoardTile.RED, ('B', 6): BoardTile.RED, ('B', 7): BoardTile.BORDER,
+                ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.BLUE, ('C', 2): BoardTile.BLUE,
+                ('C', 3): BoardTile.BLUE, ('C', 4): BoardTile.EMPTY, ('C', 5): BoardTile.RED,
+                ('C', 6): BoardTile.RED, ('C', 7): BoardTile.RED, ('C', 8): BoardTile.BORDER,
+                ('D', 0): BoardTile.BORDER, ('D', 1): BoardTile.EMPTY, ('D', 2): BoardTile.BLUE,
+                ('D', 3): BoardTile.BLUE, ('D', 4): BoardTile.EMPTY, ('D', 5): BoardTile.EMPTY,
+                ('D', 6): BoardTile.RED, ('D', 7): BoardTile.RED, ('D', 8): BoardTile.EMPTY,
+                ('D', 9): BoardTile.BORDER, ('E', 0): BoardTile.BORDER, ('E', 1): BoardTile.EMPTY,
+                ('E', 2): BoardTile.EMPTY, ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY,
+                ('E', 5): BoardTile.EMPTY, ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY,
+                ('E', 8): BoardTile.EMPTY, ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.BORDER,
+                ('F', 1): BoardTile.BORDER, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.RED,
+                ('F', 4): BoardTile.RED, ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY,
+                ('F', 7): BoardTile.BLUE, ('F', 8): BoardTile.BLUE, ('F', 9): BoardTile.EMPTY,
+                ('F', 10): BoardTile.BORDER, ('G', 2): BoardTile.BORDER, ('G', 3): BoardTile.RED,
+                ('G', 4): BoardTile.RED, ('G', 5): BoardTile.RED, ('G', 6): BoardTile.EMPTY,
+                ('G', 7): BoardTile.BLUE, ('G', 8): BoardTile.BLUE, ('G', 9): BoardTile.BLUE,
+                ('G', 10): BoardTile.BORDER, ('H', 3): BoardTile.BORDER, ('H', 4): BoardTile.RED,
+                ('H', 5): BoardTile.RED, ('H', 6): BoardTile.EMPTY, ('H', 7): BoardTile.EMPTY,
+                ('H', 8): BoardTile.BLUE, ('H', 9): BoardTile.BLUE, ('H', 10): BoardTile.BORDER,
+                ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.EMPTY, ('I', 6): BoardTile.EMPTY,
+                ('I', 7): BoardTile.EMPTY, ('I', 8): BoardTile.EMPTY, ('I', 9): BoardTile.EMPTY,
+                ('I', 10): BoardTile.BORDER, ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER,
+                ('J', 7): BoardTile.BORDER,('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER,
+                ('J', 10): BoardTile.BORDER, ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER,
+                ('@', 2): BoardTile.BORDER, ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER,
+                ('@', 5): BoardTile.BORDER
+            }
+        else:  # Default Board
+            board = {
+                ('A', 0): BoardTile.BORDER, ('A', 1): BoardTile.BLUE, ('A', 2): BoardTile.BLUE,
+                ('A', 3): BoardTile.BLUE, ('A', 4): BoardTile.BLUE, ('A', 5): BoardTile.BLUE,
+                ('A', 6): BoardTile.BORDER, ('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE,
+                ('B', 2): BoardTile.BLUE, ('B', 3): BoardTile.BLUE, ('B', 4): BoardTile.BLUE,
+                ('B', 5): BoardTile.BLUE, ('B', 6): BoardTile.BLUE, ('B', 7): BoardTile.BORDER,
+                ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.EMPTY, ('C', 2): BoardTile.EMPTY,
+                ('C', 3): BoardTile.BLUE, ('C', 4): BoardTile.BLUE, ('C', 5): BoardTile.BLUE,
+                ('C', 6): BoardTile.EMPTY, ('C', 7): BoardTile.EMPTY, ('C', 8): BoardTile.BORDER,
+                ('D', 0): BoardTile.BORDER, ('D', 1): BoardTile.EMPTY, ('D', 2): BoardTile.EMPTY,
+                ('D', 3): BoardTile.EMPTY, ('D', 4): BoardTile.EMPTY, ('D', 5): BoardTile.EMPTY,
+                ('D', 6): BoardTile.EMPTY, ('D', 7): BoardTile.EMPTY, ('D', 8): BoardTile.EMPTY,
+                ('D', 9): BoardTile.BORDER, ('E', 0): BoardTile.BORDER, ('E', 1): BoardTile.EMPTY,
+                ('E', 2): BoardTile.EMPTY, ('E', 3): BoardTile.EMPTY, ('E', 4): BoardTile.EMPTY,
+                ('E', 5): BoardTile.EMPTY, ('E', 6): BoardTile.EMPTY, ('E', 7): BoardTile.EMPTY,
+                ('E', 8): BoardTile.EMPTY, ('E', 9): BoardTile.EMPTY, ('E', 10): BoardTile.BORDER,
+                ('F', 1): BoardTile.BORDER, ('F', 2): BoardTile.EMPTY, ('F', 3): BoardTile.EMPTY,
+                ('F', 4): BoardTile.EMPTY, ('F', 5): BoardTile.EMPTY, ('F', 6): BoardTile.EMPTY,
+                ('F', 7): BoardTile.EMPTY, ('F', 8): BoardTile.EMPTY, ('F', 9): BoardTile.EMPTY,
+                ('F', 10): BoardTile.BORDER, ('G', 2): BoardTile.BORDER, ('G', 3): BoardTile.EMPTY,
+                ('G', 4): BoardTile.EMPTY, ('G', 5): BoardTile.RED, ('G', 6): BoardTile.RED,
+                ('G', 7): BoardTile.RED, ('G', 8): BoardTile.EMPTY, ('G', 9): BoardTile.EMPTY,
+                ('G', 10): BoardTile.BORDER, ('H', 3): BoardTile.BORDER, ('H', 4): BoardTile.RED,
+                ('H', 5): BoardTile.RED, ('H', 6): BoardTile.RED, ('H', 7): BoardTile.RED,
+                ('H', 8): BoardTile.RED, ('H', 9): BoardTile.RED, ('H', 10): BoardTile.BORDER,
+                ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.RED, ('I', 6): BoardTile.RED,
+                ('I', 7): BoardTile.RED, ('I', 8): BoardTile.RED, ('I', 9): BoardTile.RED,
+                ('I', 10): BoardTile.BORDER, ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER,
+                ('J', 7): BoardTile.BORDER, ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER,
+                ('J', 10): BoardTile.BORDER, ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER,
+                ('@', 2): BoardTile.BORDER, ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER,
+                ('@', 5): BoardTile.BORDER
             }
         return board
 
@@ -238,8 +256,60 @@ class Board:
 
     @property
     def red_score(self):
+        """
+        Returns red score
+        :return: int
+        """
         return self._red_score
 
     @property
     def blue_score(self):
+        """
+        Returns blue score
+        :return: int
+        """
         return self._blue_score
+
+    def setup_board_from_moves(self, moves):
+        """
+        Translate a board setup from an array of moves into a board layout.
+        :param moves: list of moves
+        :return: None
+        """
+        for move in moves:
+            row = move[0]
+            col = int(move[1])
+            color = move[2]
+
+            self._board[(row, col)] = BoardTile.RED if color == "w" else BoardTile.BLUE
+
+    def get_board_information(self):
+        """
+        Sorted position list of all the black tiles, then all the white tiles
+        :return: String
+        """
+        white_tiles = self._get_board_tile(BoardTile.RED)
+        black_tiles = self._get_board_tile(BoardTile.BLUE)
+
+        return (black_tiles + white_tiles)[0:-1]  # Remove last comma
+
+    def _get_board_tile(self, board_tile):
+        """
+        Returns all the selected board tile's position on the board in the format: "{row}{column}{color}.
+        :param board_tile: BoardTile enum
+        :return: Comma separated string
+        """
+        string = ""
+        if board_tile == BoardTile.RED:
+            color = "w"
+        elif board_tile == BoardTile.BLUE:
+            color = "b"
+        else:
+            return
+
+        for key, value in self._board.items():
+            row, col = key
+            if value == board_tile:
+                string += f"{row}{col}{color},"
+
+        return string
