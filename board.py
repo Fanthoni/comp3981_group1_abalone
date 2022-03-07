@@ -313,3 +313,33 @@ class Board:
                 string += f"{row}{col}{color},"
 
         return string
+
+    def get_marble_groups(self):
+        directions = [(1, 1), (1, 0), (0, 1), (1, 0), (0, -1), (-1, -1)]
+        groups = set()
+        for key, value in self.board.items():
+            if value == BoardTile.RED:
+                for direction in directions:
+                    groups.add(self.find_groups(key, direction))
+        return groups
+
+    def find_groups(self, key, direction):
+        row, col = ord(key[0]), key[1]
+        row_move, col_move = direction
+
+        temp = [key]
+
+        for i in range(3):
+            row = row + row_move
+            col = col + col_move
+            new_key = (chr(row), col)
+
+            if self.board.get(new_key) == BoardTile.RED:
+                temp.append(new_key)
+            else:
+                break
+
+        if len(temp) == 1:
+            return key
+        return tuple(sorted(temp))
+

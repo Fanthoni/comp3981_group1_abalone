@@ -248,7 +248,11 @@ class Abalone:
         """
         return self.board.get_board_information()
 
+    def get_marble_groups(self):
+        return self.board.get_marble_groups()
+
 
 if __name__ == "__main__":
     abalone = Abalone()
     abalone.setup_from_input_file("Test1.input")
+    print(abalone.get_marble_groups())
