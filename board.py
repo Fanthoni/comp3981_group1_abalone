@@ -28,7 +28,8 @@ class Board:
     @property
     def board(self):
         """
-        Board state property
+        Board state property.
+
         :return: board dict
         """
         return self._board
@@ -36,7 +37,8 @@ class Board:
     @classmethod
     def make_board(cls, board_choice):
         """
-        Get board state
+        Get board state.
+
         :param board_choice: a StartingPosition
         :return: board state of the given board_choice
         """
@@ -184,7 +186,8 @@ class Board:
 
     def update_board(self, move):
         """
-        Updates the current board state according to the move
+        Updates the current board state according to the move.
+
         :param move: a Move object
         """
         pass
@@ -192,7 +195,8 @@ class Board:
     @classmethod
     def __get_indentation_space(cls, row):
         """
-        Helper function to print_board formation
+        Helper function to print_board formation.
+
         :param row: a char
         :return: the number of spaces needed to be print before the BoardTile values
         """
@@ -219,7 +223,8 @@ class Board:
     @classmethod
     def __get_column_label_value(cls, row):
         """
-        Helper function to print_board labelling
+        Helper function to print_board labelling.
+
         :param row: a String row value
         :return: a string with the current column label if exists. Empty string otherwise
         """
@@ -237,7 +242,7 @@ class Board:
 
     def print_board(self):
         """
-        Prints the current board state
+        Prints the current board state.
         """
         for row in range(ord('I'), ord('@'), -1):
             current_row = chr(row)
@@ -257,7 +262,8 @@ class Board:
     @property
     def red_score(self):
         """
-        Returns red score
+        Returns red score.
+
         :return: int
         """
         return self._red_score
@@ -265,7 +271,8 @@ class Board:
     @property
     def blue_score(self):
         """
-        Returns blue score
+        Returns blue score.
+
         :return: int
         """
         return self._blue_score
@@ -273,6 +280,7 @@ class Board:
     def setup_board_from_moves(self, moves):
         """
         Translate a board setup from an array of moves into a board layout.
+
         :param moves: list of moves
         :return: None
         """
@@ -285,7 +293,8 @@ class Board:
 
     def get_board_information(self):
         """
-        Sorted position list of all the black tiles, then all the white tiles
+        Sorted position list of all the black tiles, then all the white tiles.
+
         :return: String
         """
         white_tiles = self._get_board_tile(BoardTile.RED)
@@ -295,7 +304,8 @@ class Board:
 
     def _get_board_tile(self, board_tile):
         """
-        Returns all the selected board tile's position on the board in the format: "{row}{column}{color}.
+        Returns all the selected board tile's position on the board in the format: {row}{column}{color}.
+
         :param board_tile: BoardTile enum
         :return: Comma separated string
         """
@@ -314,27 +324,43 @@ class Board:
 
         return string
 
-    def get_marble_groups(self):
+    def get_marble_groups(self, colour: BoardTile) -> set:
+        """
+        Returns a set containing all possible groupings of marbles.
+
+        :param colour: a BoardTile Enum, the colour of the side to generate groups for.
+        :return: a set containing all possible groupings of marbles.
+        """
+        # TODO: Turn this into an Enum we can use elsewhere. - Jason
         directions = [(1, 1), (1, 0), (0, 1), (1, 0), (0, -1), (-1, -1)]
         groups = set()
         for key, value in self.board.items():
             if value == BoardTile.RED:
                 for direction in directions:
-                    groups.add(self.find_groups(key, direction))
+                    groups.add(self.find_groups(key, direction, colour))
         return groups
 
-    def find_groups(self, key, direction):
+    def find_groups(self, key: tuple, direction: tuple, colour: BoardTile) -> tuple:
+        """
+        Search for other marbles nearby that can form a group.
+
+        :param key: a tuple, the 'starting' marble for the grouping.
+        :param direction: a tuple, the direction the grouping moves in from the starting marble.
+        :param colour: a BoardTile Enum, the colour of the marble group.
+        :return: a tuple, contains the co-ordinates (keys) of the grouping.
+        """
         row, col = ord(key[0]), key[1]
         row_move, col_move = direction
 
         temp = [key]
 
-        for i in range(3):
+        for i in range(2):
+            # Up to two more marbles can be added to the group.
             row = row + row_move
             col = col + col_move
             new_key = (chr(row), col)
 
-            if self.board.get(new_key) == BoardTile.RED:
+            if self.board.get(new_key) == colour:
                 temp.append(new_key)
             else:
                 break
