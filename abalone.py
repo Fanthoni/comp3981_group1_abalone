@@ -251,4 +251,4 @@ class Abalone:
 
 if __name__ == "__main__":
     abalone = Abalone()
-    abalone.setup_from_input_file("Test1.input")
+    abalone.setup_from_input_file("testInput/Test2.input")

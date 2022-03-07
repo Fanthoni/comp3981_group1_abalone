@@ -141,7 +141,3 @@ class SettingsMenu:
 
     def handle_submit(self, event):
         print(self._starting_pos.get())
-
-
-test = SettingsMenu()
-test.display()
