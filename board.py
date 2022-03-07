@@ -19,6 +19,18 @@ class StartingPositions(Enum):
     EMPTY = auto()
 
 
+class MoveDirections(Enum):
+    """
+    Contains all possible movement directions in a hex grid.
+    """
+    NW = (1, 0)
+    NE = (1, 1)
+    W = (0, -1)
+    E = (0, 1)
+    SW = (-1, -1)
+    SE = (-1, 0)
+
+
 class Board:
     def __init__(self, board_choice):
         self._board = Board.make_board(board_choice)
@@ -331,12 +343,10 @@ class Board:
         :param colour: a BoardTile Enum, the colour of the side to generate groups for.
         :return: a set containing all possible groupings of marbles.
         """
-        # TODO: Turn this into an Enum we can use elsewhere. - Jason
-        directions = [(1, 1), (1, 0), (0, 1), (1, 0), (0, -1), (-1, -1)]
         groups = set()
         for key, value in self.board.items():
-            if value == BoardTile.RED:
-                for direction in directions:
+            if value == colour:
+                for direction in MoveDirections:
                     groups.add(self.find_groups(key, direction, colour))
         return groups
 
@@ -368,4 +378,40 @@ class Board:
         if len(temp) == 1:
             return key
         return tuple(sorted(temp))
+
+    def generate_moves(self, group: tuple) -> list:
+        """
+        Generate all possible moves for a marble or set of marbles.
+
+        :param group: a tuple
+        :return: a list, contains all valid move directions for the group.
+        """
+        pass
+
+    def generate_single_moves(self, group: tuple) -> list:
+        """
+        Generate all possible moves for a single marble.
+
+        :param group: a tuple
+        :return: a list
+        """
+        pass
+
+    def generate_duo_moves(self, group: tuple) -> list:
+        """
+        Generate all possible moves for a column of two marbles.
+
+        :param group: a tuple
+        :return: a list
+        """
+        pass
+
+    def generate_trio_moves(self, group: tuple) -> list:
+        """
+        Generate all possible moves for a column of three marbles.
+
+        :param group: a tuple
+        :return: a list
+        """
+        pass
 
