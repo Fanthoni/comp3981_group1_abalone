@@ -386,7 +386,15 @@ class Board:
         :param group: a tuple
         :return: a list, contains all valid move directions for the group.
         """
-        pass
+        match len(group):
+            case 1:
+                return self.generate_single_moves(group)
+            case 2:
+                return self.generate_duo_moves(group)
+            case 3:
+                return self.generate_trio_moves(group)
+            case _:
+                print("Invalid Group")
 
     def generate_single_moves(self, group: tuple) -> list:
         """
@@ -395,7 +403,16 @@ class Board:
         :param group: a tuple
         :return: a list
         """
-        pass
+        # Convert to list for modification.
+        start = list(group[0])
+        possible_moves = []
+        for direction in MoveDirections:
+            # Add directional movement to current position to obtain possible future position.
+            possible_move = ord(start[0]) + direction[0], ord(start[1] + direction[1])
+            # Re-cast to tuple, check board value is empty.
+            if self._board[tuple((chr(possible_move[0]), possible_move[1]))] == BoardTile.EMPTY:
+                possible_moves.append(possible_move)
+        return possible_moves
 
     def generate_duo_moves(self, group: tuple) -> list:
         """
@@ -404,7 +421,18 @@ class Board:
         :param group: a tuple
         :return: a list
         """
-        pass
+        # Get marbles. Cast to list to enable modification.
+        start_marble = list(group[0])
+        end_marble = list(group[1])
+        # Get the direction the group can perform a sumito in. Multiply by -1 to get opposite direction.
+        sumito_direction = [ord(start_marble[0]) - ord(end_marble[0]), start_marble[1] - end_marble[1]]
+        possible_moves = []
+        for direction in MoveDirections:
+            if direction == tuple(sumito_direction):
+                forward_position = ord(start_marble[0]) + direction[0], ord(start_marble[1] + direction[1])
+                # for _ in range(2):
+                #     if self._board[tuple((chr(forward_position[0]), forward_position[1]))] == BoardTile.BLUE:
+        return possible_moves
 
     def generate_trio_moves(self, group: tuple) -> list:
         """
