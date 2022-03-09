@@ -487,29 +487,84 @@ class Board:
         :return: a list
         """
         # Get marbles. Cast to list to enable modification.
-        start_marble = marble_group[0]
-        end_marble = marble_group[1]
+        group_tail = marble_group[0]
+        group_head = marble_group[1]
         # Get colour of the grouping.
         group_colour = self.get_board_value(marble_group[0])
         # Get the direction the group can perform a sumito in. Multiply by -1 to get opposite direction.
         possible_moves = []
         for direction in MoveDirections:
             if direction.value in self.get_marble_group_inline_directions(marble_group):
-                # Check Sumito or next cell empty.
-                pass
+                # Checks in-line movement for 2 marbles
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY or \
+                        self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+                # Checks for 2-1 Sumito
+                next_tail = self.get_next_tile(group_tail, direction.value)
+                next_head = self.get_next_tile(group_head, direction.value)
+
+                if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                    possible_moves.append(direction)
             else:
-                # Check adjacent cells are empty.
-                pass
+                # Check for possible sidesteps.
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY and \
+                        self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
         return possible_moves
 
-    def generate_trio_moves(self, group: tuple) -> list:
+    def generate_trio_moves(self, marble_group: tuple) -> list:
         """
         Generate all possible moves for a column of three marbles.
 
-        :param group: a tuple
+        :param marble_group: a tuple
         :return: a list
         """
-        pass
+        # Get head and tail of the column.
+        group_tail = marble_group[0]
+        group_head = marble_group[2]
+
+        # Get colour of the grouping.
+        group_colour = self.get_board_value(marble_group[0])
+        opposite_colour = BoardTile.BLUE if group_colour == BoardTile.RED else BoardTile.RED
+
+        possible_moves = []
+        for direction in MoveDirections:
+            if direction.value in self.get_marble_group_inline_directions(marble_group):
+                # Checks in-line movement for 2 marbles
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY or \
+                        self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+                # Checks for 3-1 Sumito
+                next_tail = self.get_next_tile(group_tail, direction.value)
+                next_head = self.get_next_tile(group_head, direction.value)
+
+                if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                    possible_moves.append(direction)
+
+                # Checks for 3-2 Sumito
+                next_next_tail = self.get_next_tile(next_tail, direction.value)
+                next_next_head = self.get_next_tile(next_head, direction.value)
+                if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                    possible_moves.append(direction)
+            else:
+                # Check for possible sidesteps.
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY \
+                        and self.get_next_tile_value(marble_group[1], direction.value) == BoardTile.EMPTY \
+                        and self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+        return possible_moves
+
 
 
 Board.get_marble_group_inline_directions((('C', 3), ('D', 4)))
