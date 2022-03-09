@@ -1,4 +1,4 @@
-from board import StartingPositions, Board
+from board import StartingPositions, Board, BoardTile
 
 
 class Abalone:
@@ -254,5 +254,7 @@ class Abalone:
 
 if __name__ == "__main__":
     abalone = Abalone()
-    abalone.setup_from_input_file("Test1.input")
-    print(abalone.get_marble_groups())
+    abalone.setup_from_input_file("Test1")
+    red_combinations = abalone.board.get_marble_groups(BoardTile.RED)
+    # print(red_combinations)
+    abalone.board.generate_moves(red_combinations)

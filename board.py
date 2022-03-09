@@ -350,7 +350,7 @@ class Board:
                     groups.add(self._find_groups(key, direction.value, colour))
         return groups
 
-    def find_groups(self, key: tuple, direction: tuple, colour: BoardTile) -> tuple:
+    def _find_groups(self, key: tuple, direction: tuple, colour: BoardTile) -> tuple:
         """
         Search for other marbles nearby that can form a group.
 
@@ -456,11 +456,11 @@ class Board:
         for marble in duo_group:
             print(marble)
 
-    def generate_single_moves(self, group: tuple) -> list:
+    def generate_single_moves(self, marble: tuple) -> list:
         """
         Generate all possible moves for a single marble.
 
-        :param group: a tuple
+        :param marble: a tuple
         :return: a list
         """
         possible_moves = []
@@ -468,6 +468,16 @@ class Board:
             if self.get_next_tile_value(marble, direction.value) == BoardTile.EMPTY:
                 possible_moves.append(direction)
         return possible_moves
+
+    @staticmethod
+    def get_marble_group_inline_directions(marble_group: tuple) -> tuple:
+        first_marble = marble_group[0]
+        second_marble = marble_group[1]
+
+        direction = [ord(second_marble[0]) - ord(first_marble[0]), second_marble[1] - first_marble[1]]
+        opposite_direction = list(map(lambda x: x * -1, direction))
+        return(tuple(direction), tuple(opposite_direction))
+
 
     def generate_duo_moves(self, marble_group: tuple) -> list:
         """
@@ -501,3 +511,5 @@ class Board:
         """
         pass
 
+
+Board.get_marble_group_inline_directions((('C', 3), ('D', 4)))
