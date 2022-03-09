@@ -13,10 +13,22 @@ class BoardTile(Enum):
 
 
 class StartingPositions(Enum):
-    DEFAULT = "Default"
-    GERMAN = "German Daisies"
-    BELGIAN = "Belgian Daisies"
+    DEFAULT = auto()
+    GERMAN = auto()
+    BELGIAN = auto()
     EMPTY = auto()
+
+
+class MoveDirections(Enum):
+    """
+    Contains all possible movement directions in a hex grid.
+    """
+    NW = (1, 0)
+    NE = (1, 1)
+    W = (0, -1)
+    E = (0, 1)
+    SW = (-1, -1)
+    SE = (-1, 0)
 
 
 class Board:
@@ -28,7 +40,8 @@ class Board:
     @property
     def board(self):
         """
-        Board state property
+        Board state property.
+
         :return: board dict
         """
         return self._board
@@ -36,7 +49,8 @@ class Board:
     @classmethod
     def make_board(cls, board_choice):
         """
-        Get board state
+        Get board state.
+
         :param board_choice: a StartingPosition
         :return: board state of the given board_choice
         """
@@ -81,7 +95,7 @@ class Board:
             board = {
                 ('A', 0): BoardTile.BORDER, ('A', 1): BoardTile.BLUE, ('A', 2): BoardTile.BLUE,
                 ('A', 3): BoardTile.EMPTY, ('A', 4): BoardTile.RED, ('A', 5): BoardTile.RED,
-                ('A', 6): BoardTile.BORDER,('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE,
+                ('A', 6): BoardTile.BORDER, ('B', 0): BoardTile.BORDER, ('B', 1): BoardTile.BLUE,
                 ('B', 2): BoardTile.BLUE, ('B', 3): BoardTile.BLUE, ('B', 4): BoardTile.RED,
                 ('B', 5): BoardTile.RED, ('B', 6): BoardTile.RED, ('B', 7): BoardTile.BORDER,
                 ('C', 0): BoardTile.BORDER, ('C', 1): BoardTile.EMPTY, ('C', 2): BoardTile.BLUE,
@@ -105,7 +119,7 @@ class Board:
                 ('H', 8): BoardTile.BLUE, ('H', 9): BoardTile.BLUE, ('H', 10): BoardTile.BORDER,
                 ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.RED, ('I', 6): BoardTile.RED,
                 ('I', 7): BoardTile.EMPTY, ('I', 8): BoardTile.BLUE, ('I', 9): BoardTile.BLUE,
-                ('I', 10): BoardTile.BORDER,  ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER,
+                ('I', 10): BoardTile.BORDER, ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER,
                 ('J', 7): BoardTile.BORDER, ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER,
                 ('J', 10): BoardTile.BORDER, ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER,
                 ('@', 2): BoardTile.BORDER, ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER,
@@ -141,7 +155,7 @@ class Board:
                 ('I', 4): BoardTile.BORDER, ('I', 5): BoardTile.EMPTY, ('I', 6): BoardTile.EMPTY,
                 ('I', 7): BoardTile.EMPTY, ('I', 8): BoardTile.EMPTY, ('I', 9): BoardTile.EMPTY,
                 ('I', 10): BoardTile.BORDER, ('J', 5): BoardTile.BORDER, ('J', 6): BoardTile.BORDER,
-                ('J', 7): BoardTile.BORDER,('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER,
+                ('J', 7): BoardTile.BORDER, ('J', 8): BoardTile.BORDER, ('J', 9): BoardTile.BORDER,
                 ('J', 10): BoardTile.BORDER, ('@', 0): BoardTile.BORDER, ('@', 1): BoardTile.BORDER,
                 ('@', 2): BoardTile.BORDER, ('@', 3): BoardTile.BORDER, ('@', 4): BoardTile.BORDER,
                 ('@', 5): BoardTile.BORDER
@@ -184,7 +198,8 @@ class Board:
 
     def update_board(self, move):
         """
-        Updates the current board state according to the move
+        Updates the current board state according to the move.
+
         :param move: a Move object
         """
         pass
@@ -192,7 +207,8 @@ class Board:
     @classmethod
     def __get_indentation_space(cls, row):
         """
-        Helper function to print_board formation
+        Helper function to print_board formation.
+
         :param row: a char
         :return: the number of spaces needed to be print before the BoardTile values
         """
@@ -219,7 +235,8 @@ class Board:
     @classmethod
     def __get_column_label_value(cls, row):
         """
-        Helper function to print_board labelling
+        Helper function to print_board labelling.
+
         :param row: a String row value
         :return: a string with the current column label if exists. Empty string otherwise
         """
@@ -237,7 +254,7 @@ class Board:
 
     def print_board(self):
         """
-        Prints the current board state
+        Prints the current board state.
         """
         for row in range(ord('I'), ord('@'), -1):
             current_row = chr(row)
@@ -257,7 +274,8 @@ class Board:
     @property
     def red_score(self):
         """
-        Returns red score
+        Returns red score.
+
         :return: int
         """
         return self._red_score
@@ -265,7 +283,8 @@ class Board:
     @property
     def blue_score(self):
         """
-        Returns blue score
+        Returns blue score.
+
         :return: int
         """
         return self._blue_score
@@ -273,6 +292,7 @@ class Board:
     def setup_board_from_moves(self, moves):
         """
         Translate a board setup from an array of moves into a board layout.
+
         :param moves: list of moves
         :return: None
         """
@@ -285,7 +305,8 @@ class Board:
 
     def get_board_information(self):
         """
-        Sorted position list of all the black tiles, then all the white tiles
+        Sorted position list of all the black tiles, then all the white tiles.
+
         :return: String
         """
         white_tiles = self._get_board_tile(BoardTile.RED)
@@ -295,7 +316,8 @@ class Board:
 
     def _get_board_tile(self, board_tile):
         """
-        Returns all the selected board tile's position on the board in the format: "{row}{column}{color}.
+        Returns all the selected board tile's position on the board in the format: {row}{column}{color}.
+
         :param board_tile: BoardTile enum
         :return: Comma separated string
         """
@@ -313,3 +335,241 @@ class Board:
                 string += f"{row}{col}{color},"
 
         return string
+
+    def get_marble_groups(self, colour: BoardTile) -> set:
+        """
+        Returns a set containing all possible groupings of marbles.
+
+        :param colour: a BoardTile Enum, the colour of the side to generate groups for.
+        :return: a set containing all possible groupings of marbles.
+        """
+        groups = set()
+        for key, value in self.board.items():
+            if value == colour:
+                for direction in MoveDirections:
+                    groups.add(self._find_groups(key, direction.value, colour))
+        return groups
+
+    def _find_groups(self, key: tuple, direction: tuple, colour: BoardTile) -> tuple:
+        """
+        Search for other marbles nearby that can form a group.
+
+        :param key: a tuple, the 'starting' marble for the grouping.
+        :param direction: a tuple, the direction the grouping moves in from the starting marble.
+        :param colour: a BoardTile Enum, the colour of the marble group.
+        :return: a tuple, contains the co-ordinates (keys) of the grouping.
+        """
+        row, col = ord(key[0]), key[1]
+        row_move, col_move = direction
+
+        temp = [key]
+
+        for i in range(2):
+            # Up to two more marbles can be added to the group.
+            row = row + row_move
+            col = col + col_move
+            new_key = (chr(row), col)
+
+            if self.board.get(new_key) == colour:
+                temp.append(new_key)
+            else:
+                break
+
+        if len(temp) == 1:
+            return key
+        return tuple(sorted(temp))
+
+    def get_board_value(self, tile: tuple) -> BoardTile:
+        """
+        Return the BoardTile value of a given space on the board.
+
+        :param tile: a tuple, the tile that you want the value for.
+        :return: BoardTile
+        """
+        return self._board[tile]
+
+    def get_next_tile(self, tile: tuple, direction: tuple) -> tuple:
+        """
+        Get the co-ordinate of the next tile in the given direction.
+
+        :param tile: a tuple,
+        :param direction: a tuple, the direction of the tile you want the value of.
+        :return: a tuple
+        """
+        current = list(tile)  # Convert to list for modification
+        next_tile = tuple([chr(ord(current[0]) + direction[0]), current[1] + direction[1]])
+        return next_tile
+
+    def get_next_tile_value(self, tile: tuple, direction: tuple) -> BoardTile:
+        """
+        Get the value of the next tile in a given direction.
+
+        :param tile: a tuple,
+        :param direction: a tuple, the direction of the tile you want the value of.
+        :return: BoardTile
+        """
+        return self.get_board_value(self.get_next_tile(tile, direction))
+
+    def _get_single_group(self, group: set) -> set:
+        """
+        Returns all single marbles from a set of all possible groupings of marbles.
+
+        :param group: a set
+        :return: a set, containing only single marbles.
+        """
+        return set(filter(lambda combination: type(combination[0]) == str, group))
+
+    def _get_duo_group(self, group: set) -> set:
+        """
+        Returns all groups containing two marbles from a set of all possible groupings of marbles.
+
+        :param group: a set
+        :return: a set, containing only groups of two marbles.
+        """
+        return set(filter(lambda combination: len(combination) == 2 and type(combination[0]) == tuple, group))
+
+    def _get_trio_group(self, group: set) -> set:
+        """
+        Returns all groups containing three marbles from a set of all possible groupings of marbles.
+
+        :param group: a set
+        :return: a set, containing only groups of two marbles.
+        """
+        return set(filter(lambda combination: len(combination) == 3, group))
+
+    def generate_moves(self, group: set) -> list:
+        """
+        Generate all possible moves for a marble or set of marbles.
+
+        :param group: a set
+        :return: a list, contains all valid move directions for the group.
+        """
+        single_group = self._get_single_group(group)
+        duo_group = self._get_duo_group(group)
+        trio_group = self._get_trio_group(group)
+
+        # for marble in single_group:
+        #     print(marble)
+        #     print(self.generate_single_moves(marble))
+
+        # # TODO: Clean up
+        # for marble in duo_group:
+        #     print(marble)
+        #     print(self.generate_duo_moves(marble))
+
+        for marble in trio_group:
+            print(marble)
+            print(self.generate_trio_moves(marble))
+
+    def generate_single_moves(self, marble: tuple) -> list:
+        """
+        Generate all possible moves for a single marble.
+
+        :param marble: a tuple
+        :return: a list
+        """
+        possible_moves = []
+        for direction in MoveDirections:
+            if self.get_next_tile_value(marble, direction.value) == BoardTile.EMPTY:
+                possible_moves.append(direction)
+        return possible_moves
+
+    @staticmethod
+    def get_marble_group_inline_directions(marble_group: tuple) -> tuple:
+        first_marble = marble_group[0]
+        second_marble = marble_group[1]
+
+        direction = [ord(second_marble[0]) - ord(first_marble[0]), second_marble[1] - first_marble[1]]
+        opposite_direction = list(map(lambda x: x * -1, direction))
+        return tuple(direction), tuple(opposite_direction)
+
+    def generate_duo_moves(self, marble_group: tuple) -> list:
+        """
+        Generate all possible moves for a column of two marbles.
+
+        :param marble_group: a tuple
+        :return: a list
+        """
+        # Get marbles. Cast to list to enable modification.
+        group_tail = marble_group[0]
+        group_head = marble_group[1]
+        # Get colour of the grouping.
+        group_colour = self.get_board_value(marble_group[0])
+        opposite_colour = BoardTile.BLUE if group_colour == BoardTile.RED else BoardTile.RED
+
+        possible_moves = []
+        for direction in MoveDirections:
+            if direction.value in self.get_marble_group_inline_directions(marble_group):
+                # Checks in-line movement for 2 marbles
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY or \
+                        self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+                # Checks for 2-1 Sumito
+                next_tail = self.get_next_tile(group_tail, direction.value)
+                next_head = self.get_next_tile(group_head, direction.value)
+
+                if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                    possible_moves.append(direction)
+            else:
+                # Check for possible sidesteps.
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY and \
+                        self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+        return possible_moves
+
+    def generate_trio_moves(self, marble_group: tuple) -> list:
+        """
+        Generate all possible moves for a column of three marbles.
+
+        :param marble_group: a tuple
+        :return: a list
+        """
+        # Get head and tail of the column.
+        group_tail = marble_group[0]
+        group_head = marble_group[2]
+
+        # Get colour of the grouping.
+        group_colour = self.get_board_value(marble_group[0])
+        opposite_colour = BoardTile.BLUE if group_colour == BoardTile.RED else BoardTile.RED
+
+        possible_moves = []
+        for direction in MoveDirections:
+            if direction.value in self.get_marble_group_inline_directions(marble_group):
+                # Checks in-line movement for 2 marbles
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY or \
+                        self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+                # Checks for 3-1 Sumito
+                next_tail = self.get_next_tile(group_tail, direction.value)
+                next_head = self.get_next_tile(group_head, direction.value)
+
+                if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                    possible_moves.append(direction)
+
+                # Checks for 3-2 Sumito
+                next_next_tail = self.get_next_tile(next_tail, direction.value)
+                next_next_head = self.get_next_tile(next_head, direction.value)
+                if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_tail, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_head, direction.value) == opposite_colour \
+                        and self.get_next_tile_value(next_next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                    possible_moves.append(direction)
+            else:
+                # Check for possible sidesteps.
+                if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY \
+                        and self.get_next_tile_value(marble_group[1], direction.value) == BoardTile.EMPTY \
+                        and self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
+                    possible_moves.append(direction)
+        return possible_moves
+
+
+
+Board.get_marble_group_inline_directions((('C', 3), ('D', 4)))
