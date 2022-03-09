@@ -452,9 +452,14 @@ class Board:
         #     print(marble)
         #     print(self.generate_single_moves(marble))
 
-        # TODO: Clean up
-        for marble in duo_group:
+        # # TODO: Clean up
+        # for marble in duo_group:
+        #     print(marble)
+        #     print(self.generate_duo_moves(marble))
+
+        for marble in trio_group:
             print(marble)
+            print(self.generate_trio_moves(marble))
 
     def generate_single_moves(self, marble: tuple) -> list:
         """
@@ -476,8 +481,7 @@ class Board:
 
         direction = [ord(second_marble[0]) - ord(first_marble[0]), second_marble[1] - first_marble[1]]
         opposite_direction = list(map(lambda x: x * -1, direction))
-        return(tuple(direction), tuple(opposite_direction))
-
+        return tuple(direction), tuple(opposite_direction)
 
     def generate_duo_moves(self, marble_group: tuple) -> list:
         """
@@ -491,7 +495,8 @@ class Board:
         group_head = marble_group[1]
         # Get colour of the grouping.
         group_colour = self.get_board_value(marble_group[0])
-        # Get the direction the group can perform a sumito in. Multiply by -1 to get opposite direction.
+        opposite_colour = BoardTile.BLUE if group_colour == BoardTile.RED else BoardTile.RED
+
         possible_moves = []
         for direction in MoveDirections:
             if direction.value in self.get_marble_group_inline_directions(marble_group):

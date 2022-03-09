@@ -255,6 +255,6 @@ class Abalone:
 if __name__ == "__main__":
     abalone = Abalone()
     abalone.setup_from_input_file("Test1")
-    red_combinations = abalone.board.get_marble_groups(BoardTile.RED)
+    red_combinations = abalone.board.get_marble_groups(BoardTile.BLUE)
     # print(red_combinations)
     abalone.board.generate_moves(red_combinations)
