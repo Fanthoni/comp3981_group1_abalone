@@ -1,4 +1,7 @@
 from enum import Enum, auto
+from move import Move
+import copy
+from file_writer import FileOperator
 
 
 class BoardTile(Enum):
@@ -196,7 +199,7 @@ class Board:
             }
         return board
 
-    def update_board(self, move):
+    def update_board(self, move: Move):
         """
         Updates the current board state according to the move.
 
@@ -388,7 +391,8 @@ class Board:
         """
         return self._board[tile]
 
-    def get_next_tile(self, tile: tuple, direction: tuple) -> tuple:
+    @classmethod
+    def get_next_tile(cls, tile: tuple, direction: tuple) -> tuple:
         """
         Get the co-ordinate of the next tile in the given direction.
 
@@ -410,7 +414,8 @@ class Board:
         """
         return self.get_board_value(self.get_next_tile(tile, direction))
 
-    def _get_single_group(self, group: set) -> set:
+    @classmethod
+    def _get_single_group(cls, group: set) -> set:
         """
         Returns all single marbles from a set of all possible groupings of marbles.
 
@@ -419,7 +424,8 @@ class Board:
         """
         return set(filter(lambda combination: type(combination[0]) == str, group))
 
-    def _get_duo_group(self, group: set) -> set:
+    @classmethod
+    def _get_duo_group(cls, group: set) -> set:
         """
         Returns all groups containing two marbles from a set of all possible groupings of marbles.
 
@@ -428,7 +434,8 @@ class Board:
         """
         return set(filter(lambda combination: len(combination) == 2 and type(combination[0]) == tuple, group))
 
-    def _get_trio_group(self, group: set) -> set:
+    @classmethod
+    def _get_trio_group(cls, group: set) -> set:
         """
         Returns all groups containing three marbles from a set of all possible groupings of marbles.
 
@@ -437,10 +444,53 @@ class Board:
         """
         return set(filter(lambda combination: len(combination) == 3, group))
 
-    def generate_moves(self, group: set) -> list:
+    @classmethod
+    def _is_marble_group_in_correct_direction(cls, marble_group, direction):
+        return (ord(marble_group[1][0]) - ord(marble_group[0][0]), marble_group[1][1] - marble_group[0][1]) == direction
+
+    def get_board_after_move(self, move):
+        board_copy = copy.deepcopy(self)
+
+        if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(move.marble_group):
+            if len(move.marble_group) > 1 and not self._is_marble_group_in_correct_direction(move.marble_group, move.direction.value):
+                return self.get_board_after_move(Move(tuple(reversed(move.marble_group)), move.direction))
+
+            colour_queue = []
+            current_tile = move.marble_group[0]
+            current_tile_value = self.board[current_tile]
+
+            while current_tile_value not in [BoardTile.EMPTY, BoardTile.BORDER]:
+                colour_queue.append(current_tile_value)
+                current_tile = self.get_next_tile(current_tile, move.direction.value)
+                current_tile_value = self.board[current_tile]
+
+            # print(colour_queue)
+
+            starting_tile = move.marble_group[0]
+            current_tile = self.get_next_tile(starting_tile, move.direction.value)
+            while len(colour_queue) > 0:
+                colour_to_fill_in = colour_queue.pop(0)
+                board_copy.board[current_tile] = colour_to_fill_in if board_copy.board[current_tile] != BoardTile.BORDER else BoardTile.BORDER
+                current_tile = self.get_next_tile(current_tile, move.direction.value)
+            board_copy.board[starting_tile] = BoardTile.EMPTY
+        else:
+            for marble in move.marble_group:
+                colour_to_fill_in = self.board[marble]
+                next_tile = self.get_next_tile(marble, move.direction.value)
+                board_copy.board[next_tile] = colour_to_fill_in
+                board_copy.board[marble] = BoardTile.EMPTY
+
+        print(f"Move Marble {move.marble_group}")
+        print(f"Move Direction: {move.direction}")
+        board_copy.print_board()
+        print("------------End of Move-------------")
+        return board_copy
+
+    def generate_moves(self, group: set):
         """
         Generate all possible moves for a marble or set of marbles.
 
+        :param input_file_name: a String
         :param group: a set
         :return: a list, contains all valid move directions for the group.
         """
@@ -448,20 +498,27 @@ class Board:
         duo_group = self._get_duo_group(group)
         trio_group = self._get_trio_group(group)
 
-        # for marble in single_group:
-        #     print(marble)
-        #     print(self.generate_single_moves(marble))
+        valid_moves = []
+        for marble in single_group:
+            move_directions = self._generate_single_moves(marble)
+            for direction in move_directions:
+                move = Move([marble], direction)
+                valid_moves.append(move)
 
-        # # TODO: Clean up
-        # for marble in duo_group:
-        #     print(marble)
-        #     print(self.generate_duo_moves(marble))
+        for marble in duo_group:
+            move_directions = self._generate_duo_moves(marble)
+            for direction in move_directions:
+                move = Move(marble, direction)
+                valid_moves.append(move)
 
         for marble in trio_group:
-            print(marble)
-            print(self.generate_trio_moves(marble))
+            move_directions = self._generate_trio_moves(marble)
+            for direction in move_directions:
+                move = Move(marble, direction)
+                valid_moves.append(move)
+        return valid_moves
 
-    def generate_single_moves(self, marble: tuple) -> list:
+    def _generate_single_moves(self, marble: tuple) -> list:
         """
         Generate all possible moves for a single marble.
 
@@ -474,8 +531,13 @@ class Board:
                 possible_moves.append(direction)
         return possible_moves
 
-    @staticmethod
-    def get_marble_group_inline_directions(marble_group: tuple) -> tuple:
+    @classmethod
+    def _get_marble_group_inline_directions(cls, marble_group: tuple) -> tuple:
+        """
+        Returns two MoveDirections for an inline marble group
+        :param marble_group: a tuple
+        :return: two opposite MoveDirection
+        """
         first_marble = marble_group[0]
         second_marble = marble_group[1]
 
@@ -483,7 +545,7 @@ class Board:
         opposite_direction = list(map(lambda x: x * -1, direction))
         return tuple(direction), tuple(opposite_direction)
 
-    def generate_duo_moves(self, marble_group: tuple) -> list:
+    def _generate_duo_moves(self, marble_group: tuple) -> list:
         """
         Generate all possible moves for a column of two marbles.
 
@@ -499,7 +561,7 @@ class Board:
 
         possible_moves = []
         for direction in MoveDirections:
-            if direction.value in self.get_marble_group_inline_directions(marble_group):
+            if direction.value in self._get_marble_group_inline_directions(marble_group):
                 # Checks in-line movement for 2 marbles
                 if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY or \
                         self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
@@ -520,7 +582,7 @@ class Board:
                     possible_moves.append(direction)
         return possible_moves
 
-    def generate_trio_moves(self, marble_group: tuple) -> list:
+    def _generate_trio_moves(self, marble_group: tuple) -> list:
         """
         Generate all possible moves for a column of three marbles.
 
@@ -537,7 +599,7 @@ class Board:
 
         possible_moves = []
         for direction in MoveDirections:
-            if direction.value in self.get_marble_group_inline_directions(marble_group):
+            if direction.value in self._get_marble_group_inline_directions(marble_group):
                 # Checks in-line movement for 2 marbles
                 if self.get_next_tile_value(group_tail, direction.value) == BoardTile.EMPTY or \
                         self.get_next_tile_value(group_head, direction.value) == BoardTile.EMPTY:
@@ -570,6 +632,29 @@ class Board:
                     possible_moves.append(direction)
         return possible_moves
 
+    def generate_all_possible_moves_and_resulting_boards(self, current_player, input_file_name):
+        """
+        Generate .move and .board file for all the possible moves in the current board state when it's
+        the current_player's turn.
 
+        .move and .board file naming will follow the input_file_name naming.
 
-Board.get_marble_group_inline_directions((('C', 3), ('D', 4)))
+        :param current_player: a String
+        :param input_file_name: a String
+        :return:
+        """
+        marble_groups = self.get_marble_groups(
+            BoardTile.BLUE if current_player == "Black" else BoardTile.RED)
+        moves = self.generate_moves(marble_groups)
+        print(f"Total moves: {len(moves)}")
+
+        move_file_writer = FileOperator(FileOperator.get_move_file_name(input_file_name))
+        board_file_writer = FileOperator(FileOperator.get_board_file_name(input_file_name))
+
+        board_results = []
+        for move in moves:
+            move_file_writer.write_move(move)
+            board_results.append(self.get_board_after_move(move))
+
+        for board in board_results:
+            board_file_writer.write_board(board)

@@ -22,20 +22,7 @@ Moves:
 """
 
 from abc import ABC
-import doctest
-from enum import Enum
 
-
-class BoardTile(Enum):
-    # TODO: When consolidated with the main remove and import BoardTile instead.
-    """
-    Red = White
-    Blue = Black
-    """
-    RED = "\U0001F7E5"
-    BLUE = "\U0001F7E6"
-    EMPTY = "\U0001F7E9"
-    BORDER = ""
 
 class Move(ABC):
     """
@@ -43,11 +30,18 @@ class Move(ABC):
 
     Moves are Singleton callable objects that validate a move and return a list of changed board co-ordinates.
     """
-    # TODO: Make Move classes into singletons. (Maybe)
-    __instance = None
 
-    def __init__(self):
-        pass
+    def __init__(self, marble_group, direction):
+        self._marble_group = marble_group
+        self._direction = direction
+
+    @property
+    def marble_group(self):
+        return self._marble_group
+
+    @property
+    def direction(self):
+        return self._direction
 
     def move(self, formation, board):
         """
@@ -72,6 +66,10 @@ class Move(ABC):
     def __call__(self, formation, board):
         if self.validate(formation, board) is True:
             self.move(formation, board)
+
+    def __str__(self):
+        return f"Move marble: {self._marble_group}" \
+               f"\nDirection: {self.direction}"
 
 
 class TrioMove(Move):

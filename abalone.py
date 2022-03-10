@@ -1,4 +1,5 @@
-from board import StartingPositions, Board
+from board import StartingPositions, Board, BoardTile
+from file_writer import FileOperator
 
 
 class Abalone:
@@ -234,27 +235,22 @@ class Abalone:
             moves = data[1].strip('\n').split(',')
 
         key = "White" if data[0].strip('\n') == "w" else "Black"
-        self._current_player = self._players[key]
+        self._current_player = key
 
         self.board.setup_board_from_moves(moves)
         print(f"{key}'s move (Black = Blue, White = Red)")
-        self.board.print_board()
 
-    def get_board_information(self):
-        """
-        Calls same method from board to get the board information.
-
-        :return: String
-        """
-        return self.board.get_board_information()
-
-    def get_marble_groups(self):
-        return self.board.get_marble_groups()
+    @property
+    def current_player(self):
+        return self._current_player
 
 
 if __name__ == "__main__":
     abalone = Abalone()
-    abalone.setup_from_input_file("Test1")
-    red_combinations = abalone.board.get_marble_groups(BoardTile.BLUE)
-    # print(red_combinations)
-    abalone.board.generate_moves(red_combinations)
+    input_file_name = "testInput/Test2.input"
+    abalone.setup_from_input_file(input_file_name)
+    abalone.board.generate_all_possible_moves_and_resulting_boards(abalone.current_player, input_file_name)
+
+
+
+
