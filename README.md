@@ -1,5 +1,20 @@
 # Abalone - Group 1
 
+### Instruction on How to Run State Space Generator
+To run the state space generator, simply follow the following:
+1. Navigate into the root of the project
+2. Insert the .input files into the project root directory
+3. In the command line or terminal, navigate to the root project again
+4. Run the following command\
+**Note**: Python3.10 is the required python sdk version to run the executable
+
+```text
+python abalone.py
+```
+
+5. Input the file name
+6. The corresponding *Test<#>.move* and *Test<#>.board* file will be generated under the *testOutput* folder
+
 ### Setting Up and Running the Program
 This abalone program can be executed wherever emojis can be printed properly. Using Windows Terminal or PyCharm IDE is recommended.
 

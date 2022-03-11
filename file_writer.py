@@ -32,10 +32,13 @@ class FileOperator:
     @staticmethod
     def get_move_file_name(input_file_name: str):
         dot_index = input_file_name.index('.')
-        return f"{input_file_name[:dot_index]}.move"
+        return f"testOutput/{input_file_name[:dot_index]}.move"
 
     @staticmethod
     def get_board_file_name(input_file_name: str):
         dot_index = input_file_name.index('.')
-        return f"{input_file_name[:dot_index]}.board"
+        return f"testOutput/{input_file_name[:dot_index]}.board"
 
+    # @staticmethod
+    # def _get_file_name(file_name: str):
+    #     while

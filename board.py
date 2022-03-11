@@ -464,8 +464,6 @@ class Board:
                 current_tile = self.get_next_tile(current_tile, move.direction.value)
                 current_tile_value = self.board[current_tile]
 
-            # print(colour_queue)
-
             starting_tile = move.marble_group[0]
             current_tile = self.get_next_tile(starting_tile, move.direction.value)
             while len(colour_queue) > 0:
@@ -479,11 +477,6 @@ class Board:
                 next_tile = self.get_next_tile(marble, move.direction.value)
                 board_copy.board[next_tile] = colour_to_fill_in
                 board_copy.board[marble] = BoardTile.EMPTY
-
-        print(f"Move Marble {move.marble_group}")
-        print(f"Move Direction: {move.direction}")
-        board_copy.print_board()
-        print("------------End of Move-------------")
         return board_copy
 
     def generate_moves(self, group: set):
@@ -646,7 +639,6 @@ class Board:
         marble_groups = self.get_marble_groups(
             BoardTile.BLUE if current_player == "Black" else BoardTile.RED)
         moves = self.generate_moves(marble_groups)
-        print(f"Total moves: {len(moves)}")
 
         move_file_writer = FileOperator(FileOperator.get_move_file_name(input_file_name))
         board_file_writer = FileOperator(FileOperator.get_board_file_name(input_file_name))
@@ -658,3 +650,5 @@ class Board:
 
         for board in board_results:
             board_file_writer.write_board(board)
+
+        print(f"move and board files are generated under testOutput directory")

@@ -238,18 +238,21 @@ class Abalone:
         self._current_player = key
 
         self.board.setup_board_from_moves(moves)
-        print(f"{key}'s move (Black = Blue, White = Red)")
 
     @property
     def current_player(self):
         return self._current_player
 
 
-if __name__ == "__main__":
+def main():
     abalone = Abalone()
-    input_file_name = "testInput/Test2.input"
+    input_file_name = input("Enter the file name: ")
     abalone.setup_from_input_file(input_file_name)
     abalone.board.generate_all_possible_moves_and_resulting_boards(abalone.current_player, input_file_name)
+
+
+if __name__ == "__main__":
+    main()
 
 
 
