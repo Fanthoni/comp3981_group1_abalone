@@ -1,4 +1,5 @@
-from board import StartingPositions, Board
+from board import StartingPositions, Board, BoardTile
+from file_writer import FileOperator
 
 
 class Abalone:
@@ -221,7 +222,38 @@ class Abalone:
     def board(self, board):
         self._board = board
 
+    def setup_from_input_file(self, file_name):
+        """
+        Takes an input file as input, translates it into a board layout and sets a player to the current player.
+        :param file_name: input file
+
+        :return: None
+        """
+        self.board = Board(StartingPositions.EMPTY)
+        with open(file_name, 'r') as file:
+            data = file.readlines()
+            moves = data[1].strip('\n').split(',')
+
+        key = "White" if data[0].strip('\n') == "w" else "Black"
+        self._current_player = key
+
+        self.board.setup_board_from_moves(moves)
+
+    @property
+    def current_player(self):
+        return self._current_player
+
+
+def main():
+    abalone = Abalone()
+    input_file_name = input("Enter the file name: ")
+    abalone.setup_from_input_file(input_file_name)
+    abalone.board.generate_all_possible_moves_and_resulting_boards(abalone.current_player, input_file_name)
+
 
 if __name__ == "__main__":
-    abalone = Abalone()
-    abalone.start_game()
+    main()
+
+
+
+
