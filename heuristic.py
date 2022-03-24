@@ -3,7 +3,6 @@ from abalone import Abalone
 
 
 class Heuristic:
-
     board = None
     black_groups = None
     white_groups = None
@@ -29,7 +28,7 @@ class Heuristic:
         Heuristic._evaluate_marble_count()
 
         total_evaluation_score = Heuristic.black_score - Heuristic.white_score
-        print("Board Overall Evaluation", total_evaluation_score)
+        # print("Board Overall Evaluation", total_evaluation_score)
 
         return total_evaluation_score
 
@@ -55,8 +54,8 @@ class Heuristic:
             else:
                 white_center_score += 10 - Heuristic._calculate_manhattan_distance(tile, center_tile)
 
-        print("Black center score", black_center_score)
-        print("White center score", white_center_score)
+        # print("Black center score", black_center_score)
+        # print("White center score", white_center_score)
         Heuristic.black_score += black_center_score
         Heuristic.white_score += white_center_score
 
@@ -82,8 +81,8 @@ class Heuristic:
         black_proximity_score = Heuristic._calculate_proximity_score(Heuristic.black_groups)
         white_proximity_score = Heuristic._calculate_proximity_score(Heuristic.white_groups)
 
-        print("Black Prox Score", black_proximity_score)
-        print("White Prox Score", white_proximity_score)
+        #print("Black Prox Score", black_proximity_score)
+        #print("White Prox Score", white_proximity_score)
         Heuristic.black_score += black_proximity_score
         Heuristic.white_score += white_proximity_score
 
@@ -136,16 +135,17 @@ class Heuristic:
         for group in trio_marbles_white:
             white_mobility_score += len(Heuristic.board._generate_trio_moves(group)) * 5
 
-        print("Black Mobility", black_mobility_score)
-        print("White Mobility", white_mobility_score)
+        #print("Black Mobility", black_mobility_score)
+        #print("White Mobility", white_mobility_score)
         Heuristic.black_score += black_mobility_score
         Heuristic.white_score += white_mobility_score
 
     @staticmethod
     def _evaluate_marble_count():
-        black_marble_count = len({key for key, value in Heuristic.board.board.items() if value in [BoardTile.BLUE]}) * 10
+        black_marble_count = len(
+            {key for key, value in Heuristic.board.board.items() if value in [BoardTile.BLUE]}) * 10
         white_marble_count = len({key for key, value in Heuristic.board.board.items() if value in [BoardTile.RED]}) * 10
-        print("Marble count difference", black_marble_count - white_marble_count)
+        #print("Marble count difference", black_marble_count - white_marble_count)
         Heuristic.black_score += black_marble_count
         Heuristic.white_score += white_marble_count
 

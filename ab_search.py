@@ -14,40 +14,41 @@ class InfiniteValues(enum.IntEnum):
 class Search:
     def __init__(self, state):
         self.state = state  # State is a board object
-        self.starting_depth = 3
-        self.alpha = InfiniteValues.NEG_INF
-        self.beta = InfiniteValues.POS_INF
         self.dict = {}
+
+        self.count = 0
 
     def terminal_test(self):
         return False
 
     def ab_search(self):
         depth = 3
-        value = self.max_value(self.state, depth)
-        print("Overall:", value)
-        print(self.dict)
+        value = self.max_value(self.state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
+        print(self.dict.get(value))
         return value
 
-    def max_value(self, state, depth):
+    def max_value(self, state, alpha, beta, depth):
         if self.terminal_test() or depth == 0:
             return Heuristic.evaluate_board(state)
-
-        value = InfiniteValues.NEG_INF
 
         groups = state.get_marble_groups(BoardTile.BLUE)
         valid_moves = state.generate_moves(groups)
 
-        for action in valid_moves:  # Generate list of all possible moves from current state
-            new_state = state.get_board_after_move(action)
-            value = max(value, self.min_value(new_state, depth - 1))
+        value = InfiniteValues.NEG_INF
 
-            if value > self.beta:
+        for action in valid_moves:
+            new_state = state.get_board_after_move(action)
+            temp = self.min_value(new_state, alpha, beta, depth - 1)
+            value = max(value, temp)
+
+            self.dict[temp] = action
+
+            if value > beta:
                 return value
-            self.alpha = max(self.alpha, value)
+            alpha = max(alpha, value)
         return value
 
-    def min_value(self, state, depth):
+    def min_value(self, state, alpha, beta, depth):
         if self.terminal_test() or depth == 0:
             return Heuristic.evaluate_board(state)
 
@@ -56,27 +57,28 @@ class Search:
         groups = state.get_marble_groups(BoardTile.RED)
         valid_moves = state.generate_moves(groups)
 
-        for action in valid_moves:  # Generate list of all possible moves from current state
+        for action in valid_moves:
             new_state = state.get_board_after_move(action)
-            value = min(value, self.max_value(new_state, depth - 1))
+            value = min(value, self.max_value(new_state, alpha, beta, depth - 1))
 
-            if value < self.alpha:
+            if value < alpha:
                 return value
-            self.beta = min(self.beta, value)
+            beta = min(beta, value)
         return value
+
+    def reset(self):
+        self.dict = {}
+
 
 
 def main():
     abalone = Abalone()
     abalone.setup_from_input_file("Test1.input")
     board = abalone.board
-
-    ab_search = Search(board)
-    val = ab_search.ab_search()
     board.print_board()
 
-
-
+    ab_search = Search(board)
+    ab_search.ab_search()
 
 if __name__ == "__main__":
     main()
