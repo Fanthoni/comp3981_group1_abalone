@@ -16,9 +16,9 @@ class BoardTile(Enum):
 
 
 class StartingPositions(Enum):
-    DEFAULT = auto()
-    GERMAN = auto()
-    BELGIAN = auto()
+    DEFAULT = "Default"
+    GERMAN = "German Daisies"
+    BELGIAN = "Belgian Daisies"
     EMPTY = auto()
 
 
