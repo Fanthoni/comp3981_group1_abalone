@@ -451,8 +451,10 @@ class Board:
     def get_board_after_move(self, move):
         board_copy = copy.deepcopy(self)
 
-        if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(move.marble_group):
-            if len(move.marble_group) > 1 and not self._is_marble_group_in_correct_direction(move.marble_group, move.direction.value):
+        if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(
+                move.marble_group):
+            if len(move.marble_group) > 1 and not self._is_marble_group_in_correct_direction(move.marble_group,
+                                                                                             move.direction.value):
                 return self.get_board_after_move(Move(tuple(reversed(move.marble_group)), move.direction))
 
             colour_queue = []
@@ -468,7 +470,8 @@ class Board:
             current_tile = self.get_next_tile(starting_tile, move.direction.value)
             while len(colour_queue) > 0:
                 colour_to_fill_in = colour_queue.pop(0)
-                board_copy.board[current_tile] = colour_to_fill_in if board_copy.board[current_tile] != BoardTile.BORDER else BoardTile.BORDER
+                board_copy.board[current_tile] = colour_to_fill_in if board_copy.board[
+                                                                          current_tile] != BoardTile.BORDER else BoardTile.BORDER
                 current_tile = self.get_next_tile(current_tile, move.direction.value)
             board_copy.board[starting_tile] = BoardTile.EMPTY
         else:
@@ -612,10 +615,12 @@ class Board:
                 next_next_head = self.get_next_tile(next_head, direction.value)
                 if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
                         and self.get_next_tile_value(next_tail, direction.value) == opposite_colour \
-                        and self.get_next_tile_value(next_next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        and self.get_next_tile_value(next_next_tail, direction.value) in [BoardTile.EMPTY,
+                                                                                          BoardTile.BORDER] \
                         or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
                         and self.get_next_tile_value(next_head, direction.value) == opposite_colour \
-                        and self.get_next_tile_value(next_next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                        and self.get_next_tile_value(next_next_head, direction.value) in [BoardTile.EMPTY,
+                                                                                          BoardTile.BORDER]:
                     possible_moves.append(direction)
             else:
                 # Check for possible sidesteps.
@@ -652,3 +657,143 @@ class Board:
             board_file_writer.write_board(board)
 
         print(f"move and board files are generated under testOutput directory")
+
+
+class Heuristics:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def evaluate_board(self, board) -> int:
+        return self.sam_minimax(board)
+
+    def heuristic_distance_from_center(self, board):
+        player_color = BoardTile.BLUE
+        my_board = board.board
+        heuristic_score = [0, 0]
+        for iteration in range(0, 2):
+            for index in range(5, 9):
+                if my_board[('H', index)] == player_color:
+                    heuristic_score[iteration] += 1
+            for index in range(5, 8):
+                if my_board[('G', index)] == player_color:
+                    heuristic_score[iteration] += 2
+            for index in range(5, 7):
+                if my_board[('F', index)] == player_color:
+                    heuristic_score[iteration] += 3
+
+            if my_board[('E', 5)] == player_color:
+                heuristic_score[iteration] += 4
+
+            for index in range(4, 6):
+                if my_board[('D', index)] == player_color:
+                    heuristic_score[iteration] += 3
+            for index in range(3, 6):
+                if my_board[('C', index)] == player_color:
+                    heuristic_score[iteration] += 2
+            for index in range(2, 6):
+                if my_board[('B', index)] == player_color:
+                    heuristic_score[iteration] += 1
+            #                                   ###%%%###                                   #
+            for index in range(4, 9, 4):
+                if my_board[('G', index)] == player_color:
+                    heuristic_score[iteration] += 1
+
+            for index in range(3, 9, 5):
+                if my_board[('F', index)] == player_color:
+                    heuristic_score[iteration] += 1
+            for index in range(4, 8, 3):
+                if my_board[('F', index)] == player_color:
+                    heuristic_score[iteration] += 2
+
+            for index in range(2, 9, 6):
+                if my_board[('E', index)] == player_color:
+                    heuristic_score[iteration] += 1
+            for index in range(3, 8, 4):
+                if my_board[('E', index)] == player_color:
+                    heuristic_score[iteration] += 2
+            for index in range(4, 7, 2):
+                if my_board[('E', index)] == player_color:
+                    heuristic_score[iteration] += 3
+
+            for index in range(2, 9, 5):
+                if my_board[('D', index)] == player_color:
+                    heuristic_score[iteration] += 1
+            for index in range(3, 7, 3):
+                if my_board[('D', index)] == player_color:
+                    heuristic_score[iteration] += 2
+
+            for index in range(2, 7, 4):
+                if my_board[('C', index)] == player_color:
+                    heuristic_score[iteration] += 1
+
+            player_color = BoardTile.RED
+
+        ultimate_heuristic_score = heuristic_score[0] - heuristic_score[1]
+        return ultimate_heuristic_score
+
+    def heuristic_compactness(self, board) -> int:
+        player_color = BoardTile.BLUE
+        marble_groups = board.get_marble_groups(player_color)
+        dou_groups = Board._get_duo_group(marble_groups)
+        triple_groups = Board._get_trio_group(marble_groups)
+
+        num_duo_groups_blue = len(dou_groups)
+        num_triple_groups_blue = len(triple_groups)
+
+        player_color = BoardTile.RED
+        marble_groups = board.get_marble_groups(player_color)
+        dou_groups = Board._get_duo_group(marble_groups)
+        triple_groups = Board._get_trio_group(marble_groups)
+
+        num_duo_groups_red = len(dou_groups)
+        num_triple_groups_red = len(triple_groups)
+        return ((num_duo_groups_blue * 2) + (num_triple_groups_blue * 3)) - \
+               ((num_duo_groups_red * 2) + (num_triple_groups_red * 3))
+
+    def utility(self, board):
+        agent_score = board.blue_score
+        enemy_score = board.red_score
+
+        if agent_score - enemy_score == 0:
+            return 0
+
+        if agent_score == 6:
+            return 9999999
+        if enemy_score == 6:
+            return -9999999
+        if agent_score - enemy_score == 1:
+            return 200
+        if agent_score - enemy_score == 2:
+            return 400
+        if agent_score - enemy_score == 3:
+            return 600
+        if agent_score - enemy_score == 4:
+            return 800
+        if agent_score - enemy_score == 5:
+            return 1000
+
+        if agent_score - enemy_score == -1:
+            return -200
+        if agent_score - enemy_score == -2:
+            return -400
+        if agent_score - enemy_score == -3:
+            return -600
+        if agent_score - enemy_score == -4:
+            return -800
+        if agent_score - enemy_score == -5:
+            return -1000
+
+    def sam_minimax(self, board):
+        return self.heuristic_distance_from_center(board) + self.heuristic_compactness(board) + \
+            self.utility(board)
+
+
+def main():
+    test_board = Board(StartingPositions.GERMAN)
+    heuristic_object = Heuristics()
+    print(heuristic_object.sam_minimax(test_board))
+
+
+if __name__ == '__main__':
+    main()
