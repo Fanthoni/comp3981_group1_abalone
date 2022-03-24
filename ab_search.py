@@ -16,8 +16,6 @@ class Search:
         self.state = state  # State is a board object
         self.dict = {}
 
-        self.count = 0
-
     def terminal_test(self):
         return False
 
@@ -41,7 +39,8 @@ class Search:
             temp = self.min_value(new_state, alpha, beta, depth - 1)
             value = max(value, temp)
 
-            self.dict[temp] = action
+            if depth == 3:
+                self.dict[temp] = action
 
             if value > beta:
                 return value
@@ -70,7 +69,6 @@ class Search:
         self.dict = {}
 
 
-
 def main():
     abalone = Abalone()
     abalone.setup_from_input_file("Test1.input")
@@ -79,6 +77,7 @@ def main():
 
     ab_search = Search(board)
     ab_search.ab_search()
+
 
 if __name__ == "__main__":
     main()
