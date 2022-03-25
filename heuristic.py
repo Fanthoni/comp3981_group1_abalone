@@ -1,5 +1,4 @@
 from board import BoardTile
-from abalone import Abalone
 
 
 class Heuristic:
@@ -38,7 +37,7 @@ class Heuristic:
         Heuristic._evaluate_marble_count()
 
         total_evaluation_score = Heuristic.black_score - Heuristic.white_score
-        print("Board Overall Evaluation", total_evaluation_score)
+        # print("Board Overall Evaluation", total_evaluation_score)
         return total_evaluation_score
 
     @staticmethod
@@ -61,8 +60,8 @@ class Heuristic:
             else:
                 white_center_score += 10 - Heuristic._calculate_manhattan_distance(tile, center_tile)
 
-        print("Black center score", black_center_score)
-        print("White center score", white_center_score)
+        # print("Black center score", black_center_score)
+        # print("White center score", white_center_score)
         Heuristic.black_score += (black_center_score / Heuristic.black_marble_count) * Heuristic.CENTER_OF_MASS_WEIGHT
         Heuristic.white_score += (white_center_score / Heuristic.white_marble_count) * Heuristic.CENTER_OF_MASS_WEIGHT
 
@@ -88,8 +87,8 @@ class Heuristic:
         black_proximity_score = Heuristic._calculate_proximity_score(Heuristic.black_groups)
         white_proximity_score = Heuristic._calculate_proximity_score(Heuristic.white_groups)
 
-        print("Black Prox Score", black_proximity_score)
-        print("White Prox Score", white_proximity_score)
+        # print("Black Prox Score", black_proximity_score)
+        # print("White Prox Score", white_proximity_score)
         Heuristic.black_score += (black_proximity_score / Heuristic.black_marble_count) * Heuristic.PROXIMITY_WEIGHT
         Heuristic.white_score += (white_proximity_score / Heuristic.white_marble_count) * Heuristic.PROXIMITY_WEIGHT
 
@@ -142,8 +141,8 @@ class Heuristic:
         for group in trio_marbles_white:
             white_mobility_score += len(Heuristic.board._generate_trio_moves(group)) * 5
 
-        print("Black Mobility", black_mobility_score)
-        print("White Mobility", white_mobility_score)
+        # print("Black Mobility", black_mobility_score)
+        # print("White Mobility", white_mobility_score)
         Heuristic.black_score += (black_mobility_score / Heuristic.black_marble_count) * Heuristic.MOBILITY_WEIGHT
         Heuristic.white_score += (white_mobility_score / Heuristic.white_marble_count) * Heuristic.MOBILITY_WEIGHT
 
@@ -151,34 +150,6 @@ class Heuristic:
     def _evaluate_marble_count():
         black_marble_count = len({key for key, value in Heuristic.board.board.items() if value in [BoardTile.BLUE]})
         white_marble_count = len({key for key, value in Heuristic.board.board.items() if value in [BoardTile.RED]})
-        print("Marble count difference", black_marble_count - white_marble_count)
+        # print("Marble count difference", black_marble_count - white_marble_count)
         Heuristic.black_score += black_marble_count * Heuristic.MARBLE_COUNT_WEIGHT
         Heuristic.white_score += white_marble_count * Heuristic.MARBLE_COUNT_WEIGHT
-
-
-def main():
-    abalone = Abalone()
-    # abalone.setup_from_input_file('Test1.input')
-    #
-    # Heuristic.evaluate_board(abalone.board)
-    # abalone.board.print_board()
-
-    boards = []
-
-    with open("testOutput/Test1.board") as test_file:
-        for line in test_file:
-            boards.append(line)
-
-    for board in boards:
-        data = ['b\n', board]
-        with open("Test1.input", "w") as input_file:
-            input_file.writelines(data)
-        abalone.setup_from_input_file('Test1.input')
-
-        Heuristic.evaluate_board(abalone.board)
-        abalone.board.print_board()
-
-
-
-if __name__ == "__main__":
-    main()

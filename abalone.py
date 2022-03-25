@@ -1,7 +1,8 @@
 from board import StartingPositions, Board, BoardTile
 from player import HumanPlayer, AIPlayer
 from move import Move
-
+from ab_search_optimize import Search
+import random
 
 
 class Abalone:
@@ -11,7 +12,7 @@ class Abalone:
 
     def __init__(self):
         self._board = None
-        self._players = {"Black": HumanPlayer(), "White": HumanPlayer()}
+        self._players = {"Black": AIPlayer(), "White": HumanPlayer()}
         self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
@@ -23,25 +24,34 @@ class Abalone:
         :return:
         """
         self.board = Board(self._game_mode)
-        self.board.print_board()
+        # self.board.print_board()
 
         if type(self._players["Black"]) == AIPlayer and type(self._players["White"]) == AIPlayer:
             print("We do not support two AIs playing against each other yet. Please reconfigure players.")
             return
 
+        first_move = True
+
         while not self.is_game_stopped:
             # Our Player class will handle their own timers, moves, and previous moves.
-
             if self._current_player == "Black":
-                if self._players.get("Black") == AIPlayer:
+                if type(self._players.get("Black")) == AIPlayer:
                     print("---Black (AI)---")
-                    self.ai_moves()
+                    if first_move:
+                        groups = self.board.get_marble_groups(BoardTile.BLUE)
+                        moves = self.board.generate_moves(groups)
+                        random_move = moves[random.randint(0, len(moves)-1)]
+                        self.board.update_board(random_move)
+                        self.board.print_board()
+                        first_move = False
+                    else:
+                        self.ai_moves()
                 else:
                     print("---Black (Player)---")
                     self.player_moves()
                 self._current_player = "White"
             elif self._current_player == "White":
-                if self._players.get("White") == AIPlayer:
+                if type(self._players.get("White")) == AIPlayer:
                     print("---White (AI)---")
                     self.ai_moves()
                 else:
@@ -59,6 +69,11 @@ class Abalone:
         print("Time used to decide this move: X")
 
         print("Black : 0 - 0 : White")  # Scoreboard
+        print("AI is thinking of a move!")
+        ab_search = Search()
+        self.board.update_board(ab_search.ab_search(self._board, self.current_player))
+
+        print("AI Player made a move!")
         self.board.print_board()
 
     def player_moves(self):

@@ -2,7 +2,6 @@ import enum
 import sys
 import time
 
-from abalone import Abalone
 from board import Board, BoardTile
 from heuristic import Heuristic
 
@@ -15,7 +14,7 @@ class InfiniteValues(enum.IntEnum):
 class Depth(enum.IntEnum):
     COMPLETE = 0
     NODE_ORDERING_ACTIVATED = 2
-    START = 3
+    START = 2
 
 
 class Search:
@@ -32,13 +31,16 @@ class Search:
             return True
         return False
 
-    def ab_search(self, state):
+    def ab_search(self, state, current_player):
         """
         "Starter" for the alpha-beta search, includes variable represent depth searched by minimax.
         :param state: Board object
         """
-        depth = 3  # If changing this value, change START value in Depth Enum to match
-        value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
+        depth = 2  # If changing this value, change START value in Depth Enum to match
+        if current_player == "Black":
+            value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
+        else:
+            value = self.min_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
         action = self.dict.get(value)
         self.reset()
         return action
@@ -124,6 +126,9 @@ class Search:
                 temp = self.max_value(new_state, alpha, beta, depth - 1)
                 value = min(value, temp)
 
+                if depth == Depth.START:
+                    self.dict[temp] = action
+
                 if value < alpha:
                     return value
                 beta = min(beta, value)
@@ -133,6 +138,9 @@ class Search:
                 new_state = state.get_board_after_move(action)
                 temp = self.max_value(new_state, alpha, beta, depth - 1)
                 value = min(value, temp)
+
+                if depth == Depth.START:
+                    self.dict[temp] = action
 
                 if value < alpha:
                     return value
@@ -144,21 +152,3 @@ class Search:
         Resets stored actions after an action is returned.
         """
         self.dict = {}
-
-
-def main():
-    abalone = Abalone()
-    abalone.setup_from_input_file("Test1.input")
-    board = abalone.board
-    board.print_board()
-
-    ab_search = Search()
-
-    t = time.time()
-    print(ab_search.ab_search(board))
-    t2 = time.time() - t
-    print("Time taken for agent to decide move:", t2)
-
-
-if __name__ == "__main__":
-    main()
