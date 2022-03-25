@@ -22,11 +22,14 @@ class HeuristicJason:
 
         :return: an int, the heuristic value of the board relative to the black/blue player.
         """
+        self._evaluate_control()
+        self._evaluate_groupings()
+        self._evaluate_score()
         return self.black_total - self.white_total
 
     def _evaluate_control(self):
         """
-        Returns a heuristic value based on the positioning of marbles.
+        Adds the heuristic values of board control.
 
         Marbles in the center score a small number of points. Marbles on the edge grant the opponent a large number of
         points.
@@ -51,7 +54,7 @@ class HeuristicJason:
 
     def _evaluate_groupings(self):
         """
-        Returns a heuristic value based on number marble groupings and the moves available to each.
+        Adds heuristic values based on number marble groupings and the moves available to each.
         """
         totals = (self.white_total, self.black_total)
 
@@ -66,10 +69,22 @@ class HeuristicJason:
                     case 3:
                         self.black_total += len(self.board.generate_moves(grouping)) + 20
 
+    def _evaluate_score(self):
+        """
+        Adds heuristic values based on the resulting scores.
+
+        Agent will move heavily in favour of not being scored on.
+        """
+        self.black_total += self.board.blue_score * 100
+        self.white_total += self.board.red_score * 100
+
     def __call__(self):
         """
         When called returns the heuristic value of the input board.
 
         :return: an int
         """
+        self._evaluate_control()
+        self._evaluate_groupings()
+        self._evaluate_score()
         return self.black_total - self.white_total
