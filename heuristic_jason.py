@@ -75,8 +75,8 @@ class HeuristicJason:
 
         Agent will move heavily in favour of not being scored on.
         """
-        self.black_total += self.board.blue_score * 100
-        self.white_total += self.board.red_score * 100
+        self.black_total += self.board.blue_score * 200
+        self.white_total += self.board.red_score * 200
 
     def __call__(self):
         """
