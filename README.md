@@ -1,20 +1,4 @@
 # Abalone - Group 1
-
-### Instruction on How to Run State Space Generator
-To run the state space generator, simply follow the following:
-1. Navigate into the root of the project
-2. Insert the .input files into the project root directory
-3. In the command line or terminal, navigate to the root project again
-4. Run the following command\
-**Note**: Python3.10 is the required python sdk version to run the executable
-
-```text
-python abalone.py
-```
-
-5. Input the file name
-6. The corresponding *Test<#>.move* and *Test<#>.board* file will be generated under the *testOutput* folder
-
 ### Setting Up and Running the Program
 This abalone program can be executed wherever emojis can be printed properly. Using Windows Terminal or PyCharm IDE is recommended.
 
@@ -62,6 +46,44 @@ Moves remaining: X
 4. Stop Game
 Input: 
 ```
+
+#### Playing the Game
+When the program first run, the default configuration will be set to AI (Blue) vs Human (Red).\
+in this context Blue == Black and White == Red, therefore Blue makes the first move.
+
+If playing as a human, the console will prompt for a move input to move which pieces of the board\
+to be moved. Here is an example on how to correctly input the move:
+
+```text
+E4,E5,-1,-1
+```
+The above move input will result in a move of E4 and E5 tiles to the South-West. Please\
+refer to the following move directions value.
+
+```text
+    North-West = (1, 0)
+    North-East = (1, 1)
+    West = (0, -1)
+    East = (0, 1)
+    South-West = (-1, -1)
+    South-East = (-1, 0)
+```
+
+
+### Instruction on How to Run State Space Generator
+To run the state space generator, simply follow the following:
+1. Navigate into the root of the project
+2. Insert the .input files into the project root directory
+3. In the command line or terminal, navigate to the root project again
+4. Run the following command\
+**Note**: Python3.10 is the required python sdk version to run the executable
+
+```text
+python abalone.py
+```
+
+5. Input the file name
+6. The corresponding *Test<#>.move* and *Test<#>.board* file will be generated under the *testOutput* folder
 
 
 ### Authors
