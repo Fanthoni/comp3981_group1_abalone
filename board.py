@@ -2,6 +2,7 @@ from enum import Enum, auto
 from move import Move
 import copy
 from file_writer import FileOperator
+from move_directions import MoveDirections
 
 
 class BoardTile(Enum):
@@ -22,23 +23,9 @@ class StartingPositions(Enum):
     EMPTY = auto()
 
 
-class MoveDirections(Enum):
-    """
-    Contains all possible movement directions in a hex grid.
-    """
-    NW = (1, 0)
-    NE = (1, 1)
-    W = (0, -1)
-    E = (0, 1)
-    SW = (-1, -1)
-    SE = (-1, 0)
-
-
 class Board:
     def __init__(self, board_choice):
         self._board = Board.make_board(board_choice)
-        self._blue_score = 0
-        self._red_score = 0
 
     @property
     def board(self):
@@ -281,7 +268,7 @@ class Board:
 
         :return: int
         """
-        return self._red_score
+        return 14 - len({key for key, value in self._board.items() if value in [BoardTile.BLUE]})
 
     @property
     def blue_score(self):
@@ -290,7 +277,8 @@ class Board:
 
         :return: int
         """
-        return self._blue_score
+        return 14 - len({key for key, value in self._board.items() if value in [BoardTile.RED]})
+
 
     def setup_board_from_moves(self, moves):
         """
@@ -449,6 +437,11 @@ class Board:
         return (ord(marble_group[1][0]) - ord(marble_group[0][0]), marble_group[1][1] - marble_group[0][1]) == direction
 
     def get_board_after_move(self, move):
+        """
+        Returns a new Board object after this move is applied
+        :param move: a Move object
+        :return: a new Board object
+        """
         board_copy = copy.deepcopy(self)
 
         if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(move.marble_group):

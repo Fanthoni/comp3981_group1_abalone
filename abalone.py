@@ -1,5 +1,7 @@
 from board import StartingPositions, Board, BoardTile
-from file_writer import FileOperator
+from player import HumanPlayer, AIPlayer
+from move import Move
+
 
 
 class Abalone:
@@ -9,7 +11,7 @@ class Abalone:
 
     def __init__(self):
         self._board = None
-        self._players = {"Black": "Human", "White": "Human"}  # Player class not implemented yet
+        self._players = {"Black": HumanPlayer(), "White": HumanPlayer()}
         self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
@@ -23,7 +25,7 @@ class Abalone:
         self.board = Board(self._game_mode)
         self.board.print_board()
 
-        if self._players["Black"] == "AI" and self._players["White"] == "AI":
+        if type(self._players["Black"]) == AIPlayer and type(self._players["White"]) == AIPlayer:
             print("We do not support two AIs playing against each other yet. Please reconfigure players.")
             return
 
@@ -31,7 +33,7 @@ class Abalone:
             # Our Player class will handle their own timers, moves, and previous moves.
 
             if self._current_player == "Black":
-                if self._players.get("Black") == "AI":
+                if self._players.get("Black") == AIPlayer:
                     print("---Black (AI)---")
                     self.ai_moves()
                 else:
@@ -39,7 +41,7 @@ class Abalone:
                     self.player_moves()
                 self._current_player = "White"
             elif self._current_player == "White":
-                if self._players.get("White") == "AI":
+                if self._players.get("White") == AIPlayer:
                     print("---White (AI)---")
                     self.ai_moves()
                 else:
@@ -77,7 +79,7 @@ class Abalone:
                     print("Pieces moved! (Pretend it moved)")
                     print("Time taken for this move: X")
                     moved = True
-                    print("Black : 0 - 0 : White")  # Scoreboard
+                    print(f"Black : {self.board.blue_score} - {self.board.red_score} : White")  # Scoreboard
                     self.board.print_board()
                 case "2":
                     print("Previous moves: ...")
@@ -249,6 +251,7 @@ def main():
     input_file_name = input("Enter the file name: ")
     abalone.setup_from_input_file(input_file_name)
     abalone.board.generate_all_possible_moves_and_resulting_boards(abalone.current_player, input_file_name)
+
 
 
 if __name__ == "__main__":
