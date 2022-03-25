@@ -11,9 +11,15 @@ class SamuelHeuristic:
 
     @staticmethod
     def evaluate_board(self, board) -> int:
+        """
+        Returns a minimax score of the passed in board object
+        """
         return self.sam_minimax(board)
 
     def heuristic_distance_from_center(self, board):
+        """
+        Returns a heuristic value based on block marbles proximity to the center vs the white marbles
+        """
         player_color = BoardTile.BLUE
         my_board = board.board
         heuristic_score = [0, 0]
@@ -79,6 +85,9 @@ class SamuelHeuristic:
         return ultimate_heuristic_score
 
     def heuristic_compactness(self, board) -> int:
+        """
+        Returns a heuristic value based on how many grouped marbles there are with black marbles vs white marbles.
+        """
         player_color = BoardTile.BLUE
         marble_groups = board.get_marble_groups(player_color)
         dou_groups = Board._get_duo_group(marble_groups)
@@ -98,6 +107,9 @@ class SamuelHeuristic:
                ((num_duo_groups_red * 2) + (num_triple_groups_red * 3))
 
     def utility(self, board):
+        """
+        Utility function based on number of marbles captured
+        """
         agent_score = board.blue_score
         enemy_score = board.red_score
 
@@ -131,5 +143,8 @@ class SamuelHeuristic:
             return -1000
 
     def sam_minimax(self, board):
+        """
+        minimax value which draws values from all heuristic functions implemented
+        """
         return self.heuristic_distance_from_center(board) + self.heuristic_compactness(board) + \
                self.utility(board)
