@@ -46,11 +46,11 @@ class HeuristicJason:
             if self.board.board[tile] == board.BoardTile.BLUE and self.board.board[tile] in center_tiles:
                 self.black_total += 5
             elif self.board.board[tile] == board.BoardTile.BLUE and self.board.board[tile] in edge_tiles:
-                self.white_total += 100
+                self.white_total += 50
             elif self.board.board[tile] == board.BoardTile.RED and self.board.board[tile] in center_tiles:
                 self.white_total += 5
             elif self.board.board[tile] == board.BoardTile.RED and self.board.board[tile] in edge_tiles:
-                self.black_total += 100
+                self.black_total += 50
 
     def _evaluate_groupings(self):
         """
