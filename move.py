@@ -22,6 +22,7 @@ Moves:
 """
 
 from abc import ABC
+from move_directions import MoveDirections
 
 
 class Move(ABC):

@@ -75,8 +75,7 @@ class Abalone:
             user_input = input("Input: ")
             match user_input:
                 case "1":
-                    input("Enter Move Information: ")
-                    print("Pieces moved! (Pretend it moved)")
+                    self.board.update_board(Move.from_string(input("Enter Move Information: ")))
                     print("Time taken for this move: X")
                     moved = True
                     print(f"Black : {self.board.blue_score} - {self.board.red_score} : White")  # Scoreboard

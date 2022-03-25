@@ -192,7 +192,7 @@ class Board:
 
         :param move: a Move object
         """
-        pass
+        self._board = self.get_board_after_move(move)._board
 
     @classmethod
     def __get_indentation_space(cls, row):
