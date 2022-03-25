@@ -44,11 +44,11 @@ class HeuristicJason:
         # Checks each colour and adds a heuristic total accordingly.
         for tile, value in self.board.board:
             if self.board.board[tile] == board.BoardTile.BLUE and self.board.board[tile] in center_tiles:
-                self.black_total += 1
+                self.black_total += 5
             elif self.board.board[tile] == board.BoardTile.BLUE and self.board.board[tile] in edge_tiles:
                 self.white_total += 100
             elif self.board.board[tile] == board.BoardTile.RED and self.board.board[tile] in center_tiles:
-                self.white_total += 1
+                self.white_total += 5
             elif self.board.board[tile] == board.BoardTile.RED and self.board.board[tile] in edge_tiles:
                 self.black_total += 100
 
