@@ -22,6 +22,7 @@ Moves:
 """
 
 from abc import ABC
+from move_directions import MoveDirections
 
 
 class Move(ABC):
@@ -42,6 +43,59 @@ class Move(ABC):
     @property
     def direction(self):
         return self._direction
+
+    @staticmethod
+    def from_string(move_string: str):
+        """
+        Takes a string input and converts it to a move object.
+
+        Must be in the format: 'marbles,move_direction' with no spaces after the commas.
+        eg. 'A1,A2,1,1'
+
+        :param move_string: a string
+        :return: a Move object
+        """
+        move_arr = move_string.split(',')
+        direction_arr = move_arr[-2:]
+        marble_group_arr = move_arr[:-2]
+
+        marble_group = Move.get_marble_group_from_array(marble_group_arr)
+        direction = Move.get_move_direction_from_array(direction_arr)
+
+        return Move(marble_group, direction)
+
+        # print("Direction", direction_arr)
+        # print("Marble Group", marble_group_arr)
+
+    @staticmethod
+    def get_marble_group_from_array(arr):
+        """
+        Marble group, a list of tuples
+        :param arr: array of string, ex: ['A1','A2']
+        :return: a tuple
+        """
+        group = list()
+        for tile in arr:
+            new_tile = (tile[0], int(tile[1]))
+            group.append(new_tile)
+        return group
+
+    @staticmethod
+    def get_move_direction_from_array(arr):
+        """
+        Return a MoveDirections enum from an array.
+
+        :param arr: a 2 length array of integers between -1 and 1
+        :return: a MoveDirections enum.
+        """
+        direction_arr = []
+        for number in arr:
+            direction_arr.append(int(number))
+        direction_arr = tuple(direction_arr)
+
+        for direction in MoveDirections:
+            if direction.value == direction_arr:
+                return direction
 
     def move(self, formation, board):
         """
@@ -72,52 +126,11 @@ class Move(ABC):
                f"\nDirection: {self.direction}"
 
 
-class TrioMove(Move):
-    """
-    Represents the movement of three marbles.
-    """
-
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def move(self, formation, board):
-        pass
-
-    def validate(self, formation, board):
-        pass
+def main():
+    move_string = "A1,B2,C3,0,-1"
+    move = Move.from_string(move_string)
+    print(move)
 
 
-class DuoMove(Move):
-    """
-    Represents the movement of two marbles.
-    """
-
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def move(self, formation, board):
-        pass
-
-    def validate(self, formation, board):
-        pass
-
-
-class SingleMove(Move):
-    """
-    Represents the movement of a single marble.
-    """
-
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def move(self, formation, board):
-        pass
-
-    def validate(self, formation, board):
-        if board.get(formation[1]) == 0:
-            return True
-        else:
-            return False
+if __name__ == "__main__":
+    main()

@@ -3,6 +3,7 @@ Contains the UI elements for the abalone game.
 """
 from abalone import Abalone
 from board import StartingPositions
+from player import AIPlayer, HumanPlayer
 
 
 class AbaloneUI:
@@ -81,8 +82,8 @@ class AbaloneUI:
                               "2. AI\n"
                               "Input: ")
 
-        p1 = "AI" if user_input_p1 == "2" else "Human"
-        p2 = "AI" if user_input_p2 == "2" else "Human"
+        p1 = AIPlayer() if user_input_p1 == "2" else HumanPlayer()
+        p2 = AIPlayer() if user_input_p2 == "2" else HumanPlayer()
 
         self.abalone.set_player1(p1)
         print(self.abalone._players["Black"])
