@@ -13,16 +13,15 @@ class InfiniteValues(enum.IntEnum):
 
 
 class Search:
-    def __init__(self, state):
-        self.state = state  # State is a board object
+    def __init__(self):
         self.dict = {}
 
     def terminal_test(self):
         return False
 
-    def ab_search(self):
+    def ab_search(self, state):
         depth = 2
-        value = self.max_value(self.state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
+        value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
         print(self.dict.get(value))
         return value
 
@@ -35,7 +34,17 @@ class Search:
 
         value = InfiniteValues.NEG_INF
 
+        node_order = []
+
         for action in valid_moves:
+            new_state = state.get_board_after_move(action)
+            node_value = Heuristic.evaluate_board(new_state)
+
+            node_order.append((node_value, action))
+
+        node_order = sorted(node_order, key=lambda tup: tup[0], reverse=True)
+
+        for node_value, action in node_order:
             new_state = state.get_board_after_move(action)
             temp = self.min_value(new_state, alpha, beta, depth - 1)
             value = max(value, temp)
@@ -57,7 +66,17 @@ class Search:
         groups = state.get_marble_groups(BoardTile.RED)
         valid_moves = state.generate_moves(groups)
 
+        node_order = []
+
         for action in valid_moves:
+            new_state = state.get_board_after_move(action)
+            node_value = Heuristic.evaluate_board(new_state)
+
+            node_order.append((node_value, action))
+
+        node_order = sorted(node_order, key=lambda tup: tup[0])
+
+        for node_value, action in node_order:
             new_state = state.get_board_after_move(action)
             temp = self.max_value(new_state, alpha, beta, depth - 1)
             value = min(value, temp)
@@ -77,9 +96,10 @@ def main():
     board = abalone.board
     board.print_board()
 
-    ab_search = Search(board)
+    ab_search = Search()
+
     t = time.time()
-    ab_search.ab_search()
+    ab_search.ab_search(board)
     t2 = time.time() - t
     print(t2)
 
