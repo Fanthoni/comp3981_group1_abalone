@@ -14,6 +14,7 @@ class GUI:
         self.dict = None
         self.abalone = Abalone()
         self.root = Tk()
+        print(self.abalone)
 
     def reset_completed(self):
         self.move_string = ""

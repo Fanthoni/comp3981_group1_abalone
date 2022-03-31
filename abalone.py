@@ -15,7 +15,7 @@ class Abalone:
         self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
-        self._game_mode = StartingPositions.DEFAULT
+        self._game_mode = StartingPositions.BELGIAN
         self._board = Board(self._game_mode)
 
     def start_game(self):
