@@ -3,6 +3,10 @@ import abc
 
 class Player(abc.ABC):
 
+    def __init__(self, move_limit, turn_time_limit):
+        self.move_remaining = move_limit
+        self.turn_limit = turn_time_limit
+
     @abc.abstractmethod
     def make_move(self, board):
         pass
@@ -14,7 +18,9 @@ class AIPlayer(Player):
         pass
 
     def __str__(self):
-        return "AI Player"
+        return f"AI Player with {self.move_remaining} moves " \
+               f"remaining and {self.turn_limit} seconds " \
+               f"for each round"
 
 
 class HumanPlayer(Player):
@@ -23,4 +29,6 @@ class HumanPlayer(Player):
         pass
 
     def __str__(self):
-        return "Human Player"
+        return f"Human Player with {self.move_remaining} moves " \
+               f"remaining and {self.turn_limit} seconds " \
+               f"for each round"
