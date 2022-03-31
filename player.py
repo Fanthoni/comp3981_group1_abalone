@@ -10,6 +10,9 @@ class Player(abc.ABC):
 
 class AIPlayer(Player):
 
+    def __init__(self):
+        self._total_time_moved = 0
+
     def make_move(self, board):
         pass
 

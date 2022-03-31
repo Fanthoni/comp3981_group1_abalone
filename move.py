@@ -35,6 +35,7 @@ class Move(ABC):
     def __init__(self, marble_group, direction):
         self._marble_group = marble_group
         self._direction = direction
+        self._time_spent = 0
 
     @property
     def marble_group(self):

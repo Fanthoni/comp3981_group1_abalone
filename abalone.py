@@ -17,6 +17,7 @@ class Abalone:
         self._is_game_paused = False
         self._is_game_stopped = False
         self._game_mode = StartingPositions.DEFAULT
+        self.keep_looping = True
 
     def start_game(self):
         """
@@ -258,6 +259,17 @@ class Abalone:
     @property
     def current_player(self):
         return self._current_player
+
+    def test_timer_ai_move(self):
+        ab_search = Search()
+        self.board.update_board(ab_search.ab_search(self._board, self.current_player))
+
+        print("AI Player made a move!")
+        self.board.print_board()
+        self.keep_looping = False
+
+    def set_up_board_for_testing(self):
+        self._board = Board(StartingPositions.DEFAULT)
 
 
 def main():

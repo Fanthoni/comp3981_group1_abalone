@@ -36,7 +36,7 @@ class Search:
         "Starter" for the alpha-beta search, includes variable represent depth searched by minimax.
         :param state: Board object
         """
-        depth = 2  # If changing this value, change START value in Depth Enum to match
+        depth = 3  # If changing this value, change START value in Depth Enum to match
         if current_player == "Black":
             value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
         else:
