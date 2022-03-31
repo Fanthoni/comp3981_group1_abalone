@@ -14,7 +14,7 @@ class Heuristic2:
     CENTER_OF_MASS_WEIGHT = 2
     PROXIMITY_WEIGHT = 3
     MOBILITY_WEIGHT = 1
-    MARBLE_COUNT_WEIGHT = 5
+    MARBLE_COUNT_WEIGHT = 4
 
     @staticmethod
     def evaluate_board(board) -> int:
