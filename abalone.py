@@ -12,7 +12,7 @@ class Abalone:
 
     def __init__(self):
         self._board = None
-        self._players = {"Black": AIPlayer(), "White": HumanPlayer()}
+        self._players = {"Black": None, "White": None}
         self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
@@ -24,7 +24,10 @@ class Abalone:
         :return:
         """
         self.board = Board(self._game_mode)
-        # self.board.print_board()
+        self.board.print_board()
+
+        if self._players["Black"] is None or self._players["White"] is None:
+            print("Please ensure both players are set!")
 
         if type(self._players["Black"]) == AIPlayer and type(self._players["White"]) == AIPlayer:
             print("We do not support two AIs playing against each other yet. Please reconfigure players.")
@@ -258,6 +261,14 @@ class Abalone:
     @property
     def current_player(self):
         return self._current_player
+
+    @property
+    def player1(self):
+        return self._players["Black"]
+
+    @property
+    def player2(self):
+        return self._players["White"]
 
 
 def main():
