@@ -122,8 +122,7 @@ class Move(ABC):
             self.move(formation, board)
 
     def __str__(self):
-        return f"Move marble: {self._marble_group}" \
-               f"\nDirection: {self.direction}"
+        return f"{self._marble_group} {self.direction.value}"
 
 
 def main():
