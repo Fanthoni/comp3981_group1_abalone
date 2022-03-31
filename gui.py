@@ -5,6 +5,8 @@ from tkinter import *
 from ab_search_optimize import Search
 from abalone import Abalone
 from board import BoardTile
+from heuristic import Heuristic
+from heuristic2 import Heuristic2
 from move import Move
 
 
@@ -60,22 +62,44 @@ class GUI:
         print(move)
         self.abalone.board.update_board(move)
         self.root.nametowidget('player1_history').insert(END, f"{move}\n")
-        self.apply_board()
-        self.reset_completed()
-
-        self.root.update()
-
-        search = Search()
-        seconds = time.time()
-        ai_move = search.ab_search(self.abalone.board, BoardTile.RED)
-        seconds = abs(seconds - time.time())
-        self.abalone.board.update_board(ai_move)
-        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
 
         self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
         self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
 
-        self.apply_board()
+        #self.apply_board()
+        #self.reset_completed()
+
+        heuristic1 = Heuristic()
+        heuristic2 = Heuristic2()
+
+        while True:
+            search2 = Search()
+            seconds = time.time()
+            ai_move2 = search2.ab_search(self.abalone.board, "White", heuristic1)
+            seconds = abs(seconds - time.time())
+            self.abalone.board.update_board(ai_move2)
+            self.root.nametowidget('player1_history').insert(END, f"{ai_move2}\t{seconds:.4f}\n")
+
+            self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+            self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
+
+            self.apply_board()
+
+            self.root.update()
+
+            search = Search()
+            seconds = time.time()
+            ai_move = search.ab_search(self.abalone.board, "Black", heuristic2)
+            seconds = abs(seconds - time.time())
+            self.abalone.board.update_board(ai_move)
+            self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
+
+            self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+            self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
+
+            self.apply_board()
+
+            self.root.update()
 
     def apply_board(self):
         board = self.abalone.board.board
