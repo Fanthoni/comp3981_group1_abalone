@@ -78,7 +78,7 @@ class Move(ABC):
         for tile in arr:
             new_tile = (tile[0], int(tile[1]))
             group.append(new_tile)
-        return group
+        return sorted(group)
 
     @staticmethod
     def get_move_direction_from_array(arr):
