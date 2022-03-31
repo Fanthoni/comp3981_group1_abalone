@@ -15,7 +15,10 @@ class GUI:
         self.abalone = Abalone()
         self.root = Tk()
 
-    def reset_move(self):
+    def reset_completed(self):
+        self.move_string = ""
+
+    def reset_move(self, event):
         self.move_string = ""
 
     def add_to_move_string(self, content):
@@ -57,7 +60,7 @@ class GUI:
         self.abalone.board.update_board(move)
         self.root.nametowidget('player1_history').insert(END, f"{move}\n")
         self.apply_board()
-        self.reset_move()
+        self.reset_completed()
 
         self.root.update()
 
@@ -66,7 +69,11 @@ class GUI:
         ai_move = search.ab_search(self.abalone.board, BoardTile.RED)
         seconds = abs(seconds - time.time())
         self.abalone.board.update_board(ai_move)
-        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds}\n")
+        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
+
+        self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+        self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
+
         self.apply_board()
 
     def apply_board(self):
@@ -326,8 +333,17 @@ class GUI:
 
         player2_label = Label(self.root, text="Player 2")
         player2_label.place(x=1200, y=30)
-        player2_history = tkinter.Text(self.root, width=40, height=20, name='player2_history')
+        player2_history = tkinter.Text(self.root, width=48, height=20, name='player2_history')
         player2_history.place(x=1200, y=50)
+
+        white_score = Label(self.root, text="0", font=("Courier", 40), fg="red", name="player2_score")
+        white_score.place(x=600, y=200)
+
+        hyphen_score = Label(self.root, text="-", font=("Courier", 40), bg="darkgrey")
+        hyphen_score.place(x=650, y=200)
+
+        black_score = Label(self.root, text="0", font=("Courier", 40), fg="blue", name="player1_score")
+        black_score.place(x=700, y=200)
 
         early_access = Label(self.root, text="SUPER EARLY ACCESS TO THIS AMAZING ABALONE GUI")
         early_access.place(x=1290, y=770)
