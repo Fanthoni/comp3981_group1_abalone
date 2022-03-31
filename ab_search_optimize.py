@@ -53,6 +53,7 @@ class Search:
         :param beta: Beta beta for minimax
         :param depth: depth used in depth iterative search
         """
+        time_start = time.time()
         if self.terminal_test(state) or depth == Depth.COMPLETE:
             return Heuristic.evaluate_board(state)
 
@@ -71,6 +72,10 @@ class Search:
             node_order = sorted(node_order, key=lambda tup: tup[0], reverse=True)
 
             for node_value, action in node_order:
+                # Check if exceeded maximum search time.
+                if time.time() - time_start > 4.5:
+                    print(f"Search completed in {time.time() - time_start} seconds")
+                    return value
                 new_state = state.get_board_after_move(action)
                 temp = self.min_value(new_state, alpha, beta, depth - 1)
                 value = max(value, temp)
@@ -81,9 +86,13 @@ class Search:
                 if value > beta:
                     return value
                 alpha = max(alpha, value)
+            print(f"Search completed in {time.time() - time_start} seconds")
             return value
         else:
             for action in valid_moves:
+                if time.time() - time_start > 4.5:
+                    print(f"Search completed in {time.time() - time_start} seconds")
+                    return value
                 new_state = state.get_board_after_move(action)
                 temp = self.min_value(new_state, alpha, beta, depth - 1)
                 value = max(value, temp)
