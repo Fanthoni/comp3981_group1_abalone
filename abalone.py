@@ -261,6 +261,7 @@ class Abalone:
         return self._current_player
 
     def test_timer_ai_move(self):
+        self.keep_looping = True
         ab_search = Search()
         self.board.update_board(ab_search.ab_search(self._board, self.current_player))
 
