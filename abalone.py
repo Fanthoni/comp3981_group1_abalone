@@ -11,12 +11,12 @@ class Abalone:
     """
 
     def __init__(self):
-        self._board = None
         self._players = {"Black": AIPlayer(), "White": HumanPlayer()}
         self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
         self._game_mode = StartingPositions.DEFAULT
+        self._board = Board(self._game_mode)
         self.keep_looping = True
 
     def start_game(self):
