@@ -73,7 +73,7 @@ class Search:
 
             for node_value, action in node_order:
                 # Check if exceeded maximum search time.
-                if time.time() - time_start > 4.5:
+                if time.time() - time_start > 6.5:
                     print(f"Search completed in {time.time() - time_start} seconds")
                     return value
                 new_state = state.get_board_after_move(action)
@@ -90,7 +90,8 @@ class Search:
             return value
         else:
             for action in valid_moves:
-                if time.time() - time_start > 4.5:
+                # Check if exceeded maximum search time.
+                if time.time() - time_start > 6.5:
                     print(f"Search completed in {time.time() - time_start} seconds")
                     return value
                 new_state = state.get_board_after_move(action)
