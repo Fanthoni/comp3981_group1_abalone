@@ -71,8 +71,10 @@ class GUI:
         heuristic1 = Heuristic()
         heuristic2 = Heuristic2()
 
+        search2 = Search()
+        search = Search()
+
         while True:
-            search2 = Search()
             seconds = time.time()
             ai_move2 = search2.ab_search(self.abalone.board, "Black", heuristic1)
             seconds = abs(seconds - time.time())
@@ -83,7 +85,6 @@ class GUI:
             self.apply_board()
             self.root.update()
 
-            search = Search()
             seconds = time.time()
             ai_move = search.ab_search(self.abalone.board, "White", heuristic2)
             seconds = abs(seconds - time.time())

@@ -20,6 +20,7 @@ class Depth(enum.IntEnum):
 class Search:
     def __init__(self):
         self.dict = {}
+        self.transposition_table = {}
 
     def terminal_test(self, state):
         """
@@ -54,7 +55,8 @@ class Search:
         :param depth: depth used in depth iterative search
         """
         if self.terminal_test(state) or depth == Depth.COMPLETE:
-            return h.evaluate_board(state)
+            # return h.evaluate_board(state)
+            return self.get_node_value(state, h)
 
         groups = state.get_marble_groups(BoardTile.BLUE)
         valid_moves = state.generate_moves(groups)
@@ -65,8 +67,8 @@ class Search:
             node_order = []
             for action in valid_moves:
                 new_state = state.get_board_after_move(action)
-                node_value = h.evaluate_board(new_state)
-
+                # node_value = h.evaluate_board(new_state)
+                node_value = self.get_node_value(new_state, h)
                 node_order.append((node_value, action))
             node_order = sorted(node_order, key=lambda tup: tup[0], reverse=True)
 
@@ -105,7 +107,8 @@ class Search:
         :param depth: depth used in depth iterative search
         """
         if self.terminal_test(state) or depth == Depth.COMPLETE:
-            return h.evaluate_board(state)
+            # return h.evaluate_board(state)
+            return self.get_node_value(state, h)
 
         value = InfiniteValues.POS_INF
 
@@ -116,7 +119,8 @@ class Search:
             node_order = []
             for action in valid_moves:
                 new_state = state.get_board_after_move(action)
-                node_value = h.evaluate_board(new_state)
+                # node_value = h.evaluate_board(new_state)
+                node_value = self.get_node_value(new_state, h)
 
                 node_order.append((node_value, action))
             node_order = sorted(node_order, key=lambda tup: tup[0])
@@ -152,3 +156,9 @@ class Search:
         Resets stored actions after an action is returned.
         """
         self.dict = {}
+
+    def get_node_value(self, state, h):
+        key = frozenset(state.board.items())
+        if key not in self.transposition_table.keys():
+            self.transposition_table[key] = h.evaluate_board(state)
+        return self.transposition_table[key]
