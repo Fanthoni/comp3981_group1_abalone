@@ -1,5 +1,6 @@
 import tkinter
 import time
+import threading
 from tkinter import *
 
 from ab_search_optimize import Search
@@ -17,6 +18,8 @@ class GUI:
         self.abalone = Abalone()
         self.root = Tk()
         print(self.abalone)
+        self.timer_frame = None
+        self.keep_looping = True
 
     def reset_completed(self):
         self.move_string = ""
@@ -32,6 +35,26 @@ class GUI:
     def add_to_group(self, event):
         if event.widget.cget("bg") in ["blue", "red"]:
             self.add_to_move_string(event.widget.cget("text"))
+
+    def cd(self, timer_label_obj, ts):
+        while ts > 0 and self.keep_looping:
+            timer_label_obj.config(text=ts)
+            ts -= 1
+            timer_label_obj.place(x=600, y=30)
+            time.sleep(1)
+            if ts == 0:
+                timer_label_obj.config(text="Time is complete!")
+                timer_label_obj.place(x=600, y=30)
+                # timer_label_obj.destroy()
+                # completeTimer = Label(self.timer_frame, text="Time is complete")
+                # completeTimer.place(x=600, y=30)
+
+    def countdown(self, t):
+        timer = Label(self.timer_frame)
+        ts = int(t)
+        # th = threading.Thread(target=cd,args=[timer, ts])
+        th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
+        th.start()
 
     def add_direction(self, event):
         name = event.widget.cget("text")
@@ -71,17 +94,21 @@ class GUI:
         heuristic1 = Heuristic()
         heuristic2 = Heuristic2()
 
-        search = Search()
-        seconds = time.time()
-        ai_move = search.ab_search(self.abalone.board, "White", heuristic2)
-        seconds = abs(seconds - time.time())
-        print("AI should be making move here !!!")
-        self.abalone.board.update_board(ai_move)
-        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
-        self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
-        self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
-        self.apply_board()
-        self.root.update()
+        self.keep_looping = True
+        self.countdown(20)
+        t1 = threading.Thread(target=self.ai_search, args=["White", heuristic1])
+        t1.start()
+
+        # search = Search()
+        # seconds = time.time()
+        # ai_move = search.ab_search(self.abalone.board, "White", heuristic2)
+        # seconds = abs(seconds - time.time())
+        # self.abalone.board.update_board(ai_move)
+        # self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
+        # self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+        # self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
+        # self.apply_board()
+        # self.root.update()
 
         # while True:
         #     search2 = Search()
@@ -106,6 +133,21 @@ class GUI:
         #     self.apply_board()
         #     self.root.update()
 
+
+    def ai_search(self, color: StringVar, heuristic):
+        search = Search()
+        seconds = time.time()
+        ai_move = search.ab_search(self.abalone.board, color, heuristic)
+        seconds = abs(seconds - time.time())
+        print("AI should be making move here!!!")
+        self.abalone.board.update_board(ai_move)
+        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
+        self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+        self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
+        self.apply_board()
+        self.root.update()
+        self.keep_looping = False
+
     def apply_board(self):
         board = self.abalone.board.board
 
@@ -123,6 +165,9 @@ class GUI:
     def gui(self):
         self.root.geometry("1600x800")
         self.root.configure(background="darkgrey")
+
+        self.timer_frame = Label(self.root, text="TimerFrame", height=5, width=20)
+        self.timer_frame.place(x=600, y=30)
 
         buttonI5 = Button(self.root, text="I5", height=2, width=5)
         buttonI5.place(x=125, y=25)

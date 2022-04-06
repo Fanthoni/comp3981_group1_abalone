@@ -31,21 +31,21 @@ class Search:
             return True
         return False
 
-    def ab_search(self, state, current_player):
+    def ab_search(self, state, current_player, h):
         """
         "Starter" for the alpha-beta search, includes variable represent depth searched by minimax.
         :param state: Board object
         """
         depth = 3  # If changing this value, change START value in Depth Enum to match
         if current_player == "Black":
-            value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
+            value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth, h)
         else:
-            value = self.min_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth)
+            value = self.min_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth, h)
         action = self.dict.get(value)
         self.reset()
         return action
 
-    def max_value(self, state, alpha, beta, depth):
+    def max_value(self, state, alpha, beta, depth, h):
         """
         Alpha beta search for the maximum part.
         :param state: Board object
@@ -53,9 +53,8 @@ class Search:
         :param beta: Beta beta for minimax
         :param depth: depth used in depth iterative search
         """
-        time_start = time.time()
         if self.terminal_test(state) or depth == Depth.COMPLETE:
-            return Heuristic.evaluate_board(state)
+            return h.evaluate_board(state)
 
         groups = state.get_marble_groups(BoardTile.BLUE)
         valid_moves = state.generate_moves(groups)
@@ -66,18 +65,14 @@ class Search:
             node_order = []
             for action in valid_moves:
                 new_state = state.get_board_after_move(action)
-                node_value = Heuristic.evaluate_board(new_state)
+                node_value = h.evaluate_board(new_state)
 
                 node_order.append((node_value, action))
             node_order = sorted(node_order, key=lambda tup: tup[0], reverse=True)
 
             for node_value, action in node_order:
-                # Check if exceeded maximum search time.
-                if time.time() - time_start > 6.5:
-                    print(f"Search completed in {time.time() - time_start} seconds")
-                    return value
                 new_state = state.get_board_after_move(action)
-                temp = self.min_value(new_state, alpha, beta, depth - 1)
+                temp = self.min_value(new_state, alpha, beta, depth - 1, h)
                 value = max(value, temp)
 
                 if depth == Depth.START:
@@ -86,16 +81,11 @@ class Search:
                 if value > beta:
                     return value
                 alpha = max(alpha, value)
-            print(f"Search completed in {time.time() - time_start} seconds")
             return value
         else:
             for action in valid_moves:
-                # Check if exceeded maximum search time.
-                if time.time() - time_start > 6.5:
-                    print(f"Search completed in {time.time() - time_start} seconds")
-                    return value
                 new_state = state.get_board_after_move(action)
-                temp = self.min_value(new_state, alpha, beta, depth - 1)
+                temp = self.min_value(new_state, alpha, beta, depth - 1, h)
                 value = max(value, temp)
 
                 if depth == Depth.START:
@@ -106,7 +96,7 @@ class Search:
                 alpha = max(alpha, value)
             return value
 
-    def min_value(self, state, alpha, beta, depth):
+    def min_value(self, state, alpha, beta, depth, h):
         """
         Alpha beta search for the minimum part.
         :param state: Board object
@@ -115,7 +105,7 @@ class Search:
         :param depth: depth used in depth iterative search
         """
         if self.terminal_test(state) or depth == Depth.COMPLETE:
-            return Heuristic.evaluate_board(state)
+            return h.evaluate_board(state)
 
         value = InfiniteValues.POS_INF
 
@@ -126,14 +116,14 @@ class Search:
             node_order = []
             for action in valid_moves:
                 new_state = state.get_board_after_move(action)
-                node_value = Heuristic.evaluate_board(new_state)
+                node_value = h.evaluate_board(new_state)
 
                 node_order.append((node_value, action))
             node_order = sorted(node_order, key=lambda tup: tup[0])
 
             for node_value, action in node_order:
                 new_state = state.get_board_after_move(action)
-                temp = self.max_value(new_state, alpha, beta, depth - 1)
+                temp = self.max_value(new_state, alpha, beta, depth - 1, h)
                 value = min(value, temp)
 
                 if depth == Depth.START:
@@ -146,7 +136,7 @@ class Search:
         else:
             for action in valid_moves:
                 new_state = state.get_board_after_move(action)
-                temp = self.max_value(new_state, alpha, beta, depth - 1)
+                temp = self.max_value(new_state, alpha, beta, depth - 1, h)
                 value = min(value, temp)
 
                 if depth == Depth.START:
