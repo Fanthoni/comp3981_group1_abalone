@@ -40,7 +40,7 @@ class Search:
         :param state: Board object
         """
         self.past = time.time()
-        depth = 2  # If changing this value, change START value in Depth Enum to match
+        depth = 4  # If changing this value, change START value in Depth Enum to match
         if current_player == "Black":
             value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth, h)
         else:

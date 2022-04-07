@@ -3,6 +3,7 @@ import time
 import threading
 from abalone_settings_ui import SettingsMenu
 from tkinter import *
+import player
 
 from ab_search_optimize import Search
 from abalone import Abalone
@@ -21,11 +22,18 @@ class GUI:
         print(self.abalone)
         self.timer_frame = None
         self.keep_looping = True
-        self.time_limit = 20
+        self.time_limit = 10
         self.search = Search()
         self.pause_button_on = False
         self.pause_game_button = None
-        self.keep_ticking = True
+        self.reset_timer = False
+        self.ai_search_fast_enough = True
+        # replace values of current/non_current_turn_player params with updated data obtained from when user inputs
+        # settings info.
+        # These params are for helping the timer know what to do when it hits 0; should the timer call the AI search,
+        # or wait for a move from the player? etc.
+        self.current_turn_player = player.HumanPlayer(10, 10)
+        self.non_current_turn_player = player.AIPlayer(10, 10)
 
     def reset_completed(self):
         self.move_string = ""
@@ -43,28 +51,38 @@ class GUI:
             self.add_to_move_string(event.widget.cget("text"))
 
     def cd(self, timer_label_obj, ts):
-        while ts > 0 and self.keep_ticking:
+        while ts > 0:
             while self.search.is_paused:
                 time.sleep(1)
             timer_label_obj.config(text=ts)
             ts -= 1
             timer_label_obj.place(x=600, y=30)
             time.sleep(1)
-            if ts == 0 or not self.keep_looping:
-                # timer_label_obj.config(text="Time is complete!")
-                # timer_label_obj.place(x=600, y=30)
-
+            if not self.keep_looping:
                 ts = self.time_limit
                 self.keep_looping = True
 
-                # timer_label_obj.destroy()
-                # completeTimer = Label(self.timer_frame, text="Time is complete")
-                # completeTimer.place(x=600, y=30)
-        # if not self.keep_looping:
-        #     self.cd(timer_label_obj, self.time_limit)
+            if ts == 0:
+                ts = self.time_limit
+                self.keep_looping = True
+                # the following code logic here to check whose player turn has let their time limit hit 0; for that
+                # player, SKIP their turn, and give control to other player (timer is reset with above two lines
+                # already)
+                if type(self.current_turn_player) == player.HumanPlayer:
+                    self.call_ai_search_when_player_turn_ends()
+                else:
+                    # Needs to cancel search algorithm, and let the player's turn start
+                    self.ai_search_fast_enough = False
+                temp = self.current_turn_player
+                self.current_turn_player = self.non_current_turn_player
+                self.non_current_turn_player = temp
+
+            if self.reset_timer:
+                ts = self.time_limit
+                self.search.is_paused = True
 
     def countdown(self, t):
-        timer = Label(self.timer_frame)
+        # timer = Label(self.timer_frame)
         ts = int(t)
         # th = threading.Thread(target=cd,args=[timer, ts])
         th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
@@ -103,7 +121,8 @@ class GUI:
         self.abalone.board.update_board(move)
         self.apply_board()
         self.reset_completed()
-        self.root.nametowidget('player1_history').insert(END, f"{move}\n")
+        # update player move history
+        self.root.nametowidget('player1').insert(END, f"{move}\n")
         self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
         self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
         self.root.update()
@@ -138,29 +157,31 @@ class GUI:
         #     self.root.update()
 
     def ai_search(self, color: StringVar, heuristic):
+        self.ai_search_fast_enough = True
         seconds = time.time()
         ai_move = self.search.ab_search(self.abalone.board, color, heuristic)
-
-        # print("full time maybe: ", time.time() - seconds)
-        #seconds = abs(seconds - time.time() - self.search.seconds_passed)
-
-        # print("full time: ", time.time() - seconds)
-        # print("time passed:", self.search.seconds_passed)
-        # print("time after pause deduction", time.time() - seconds - self.search.seconds_passed)
 
         time_passed = time.time() - seconds - self.search.seconds_passed
 
         self.search.seconds_passed = 0
-        self.abalone.board.update_board(ai_move)
-        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{time_passed:.4f} sec\n")
-        self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
-        self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
-        self.apply_board()
-        # note to self: chance for race condition; board could update, but then thread loses control such that
-        # keep_looping bool is still True, causing countdown timer to keep looping.
-        self.root.update()
-        # reset timer
+        if self.ai_search_fast_enough:
+            self.abalone.board.update_board(ai_move)
+            self.root.nametowidget('player2').insert(END, f"{ai_move}\t{time_passed:.4f} sec\n")
+            self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+            self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
+            self.apply_board()
+            self.root.update()
+
+        # following line just reset's timer
         self.keep_looping = False
+
+    def call_ai_search_when_player_turn_ends(self):
+        # resets timer after player couldn't make choice fast enough
+        self.keep_looping = False
+
+        heuristic1 = Heuristic()
+        t1 = threading.Thread(target=self.ai_search, args=["White", heuristic1])
+        t1.start()
 
     def apply_board(self):
         board = self.abalone.board.board
@@ -177,7 +198,8 @@ class GUI:
                 button.config(bg="grey")
 
     def start_timer(self):
-        self.keep_ticking = True
+        self.reset_timer = False
+        self.search.is_paused = False
         self.countdown(self.time_limit)
 
     def start_settings(self):
@@ -199,12 +221,13 @@ class GUI:
             self.pause_game_button['text'] = "pause"
 
     def reset_game(self):
-        self.keep_ticking = False
+        self.reset_timer = True
+        self.timer_frame['text'] = "TimerFrame"
+        self.root.nametowidget('player1').delete("1.0", "end")
+        self.root.nametowidget('player2').delete("1.0", "end")
+
         self.abalone = Abalone()
         self.apply_board()
-        self.timer_frame['text'] = "TimerFrame"
-
-        # self.gui()
 
     def gui(self):
         self.root.geometry("1600x800")
@@ -225,10 +248,8 @@ class GUI:
 
         reset_game_button = Button(self.root, text="reset", padx=2, command=self.reset_game, width=18)
         reset_game_button.place(x=600, y=520)
-        #
-        # start_game_button = Button(self.root, text="Start Game - starts timer", padx=2,
-        #                            command=self.start_timer)
-        # start_game_button.place(x=600, y=400)
+
+        # ############################################################## #
 
         buttonI5 = Button(self.root, text="I5", height=2, width=5)
         buttonI5.place(x=125, y=25)
@@ -465,12 +486,12 @@ class GUI:
 
         player1_label = Label(self.root, text="Player 1")
         player1_label.place(x=850, y=20)
-        player1_history = tkinter.Text(self.root, width=48, height=20, name='player1_butts')
+        player1_history = tkinter.Text(self.root, width=48, height=20, name='player1')
         player1_history.place(x=850, y=40)
 
         player2_label = Label(self.root, text="Player 2")
         player2_label.place(x=850, y=400)
-        player2_history = tkinter.Text(self.root, width=48, height=20, name='player2_butts')
+        player2_history = tkinter.Text(self.root, width=48, height=20, name='player2')
         player2_history.place(x=850, y=420)
 
         white_score = Label(self.root, text="0", font=("Courier", 40), fg="red", name="player2_score")
