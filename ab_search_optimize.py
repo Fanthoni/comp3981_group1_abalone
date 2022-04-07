@@ -20,6 +20,9 @@ class Depth(enum.IntEnum):
 class Search:
     def __init__(self):
         self.dict = {}
+        self.seconds_passed = 0
+        self.is_paused = False
+        self.past = None
 
     def terminal_test(self, state):
         """
@@ -36,6 +39,7 @@ class Search:
         "Starter" for the alpha-beta search, includes variable represent depth searched by minimax.
         :param state: Board object
         """
+        self.past = time.time()
         depth = 2  # If changing this value, change START value in Depth Enum to match
         if current_player == "Black":
             value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth, h)
@@ -53,6 +57,11 @@ class Search:
         :param beta: Beta beta for minimax
         :param depth: depth used in depth iterative search
         """
+        # Test for pause state; is so count time passes until un-paused
+        while self.is_paused:
+            time.sleep(1)
+            self.seconds_passed += 1
+
         if self.terminal_test(state) or depth == Depth.COMPLETE:
             return h.evaluate_board(state)
 
@@ -104,6 +113,11 @@ class Search:
         :param beta: Beta beta for minimax
         :param depth: depth used in depth iterative search
         """
+        # Test for pause state; is so count time passes until un-paused
+        while self.is_paused:
+            time.sleep(1)
+            self.seconds_passed += 1
+
         if self.terminal_test(state) or depth == Depth.COMPLETE:
             return h.evaluate_board(state)
 

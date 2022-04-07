@@ -1,6 +1,7 @@
 import tkinter
 import time
 import threading
+from abalone_settings_ui import SettingsMenu
 from tkinter import *
 
 from ab_search_optimize import Search
@@ -21,7 +22,11 @@ class GUI:
         self.timer_frame = None
         self.keep_looping = True
         self.time_limit = 20
-        self._lock = threading.Lock()
+        self.search = Search()
+        self.pause_button_on = False
+        self.pause_game_button = None
+        self.keep_ticking = True
+        self.th = None
 
     def reset_completed(self):
         self.move_string = ""
@@ -39,7 +44,9 @@ class GUI:
             self.add_to_move_string(event.widget.cget("text"))
 
     def cd(self, timer_label_obj, ts):
-        while ts > 0:
+        while ts > 0 and self.keep_ticking:
+            while self.search.is_paused:
+                time.sleep(1)
             timer_label_obj.config(text=ts)
             ts -= 1
             timer_label_obj.place(x=600, y=30)
@@ -61,8 +68,8 @@ class GUI:
         timer = Label(self.timer_frame)
         ts = int(t)
         # th = threading.Thread(target=cd,args=[timer, ts])
-        th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
-        th.start()
+        self.th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
+        self.th.start()
 
     def add_direction(self, event):
         # resets timer after player has made a choice
@@ -132,13 +139,21 @@ class GUI:
         #     self.root.update()
 
     def ai_search(self, color: StringVar, heuristic):
-        search = Search()
         seconds = time.time()
-        ai_move = search.ab_search(self.abalone.board, color, heuristic)
-        seconds = abs(seconds - time.time())
-        print("AI should be making move here!!!")
+        ai_move = self.search.ab_search(self.abalone.board, color, heuristic)
+
+        # print("full time maybe: ", time.time() - seconds)
+        #seconds = abs(seconds - time.time() - self.search.seconds_passed)
+
+        # print("full time: ", time.time() - seconds)
+        # print("time passed:", self.search.seconds_passed)
+        # print("time after pause deduction", time.time() - seconds - self.search.seconds_passed)
+
+        time_passed = time.time() - seconds - self.search.seconds_passed
+
+        self.search.seconds_passed = 0
         self.abalone.board.update_board(ai_move)
-        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
+        self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{time_passed:.4f} sec\n")
         self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
         self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
         self.apply_board()
@@ -163,7 +178,34 @@ class GUI:
                 button.config(bg="grey")
 
     def start_timer(self):
+        self.keep_ticking = True
         self.countdown(self.time_limit)
+
+    def start_settings(self):
+        SettingsMenu(self.root, self.abalone).display()
+
+        # topLevel = tk.Toplevel()
+        # SettingsMenu(topLevel, self.abalone).display()
+        # topLevel.wait_window()
+        # print("Dont waiting for window")
+
+    def pause_game(self):
+        if not self.pause_button_on:
+            self.search.is_paused = True
+            self.pause_button_on = True
+            self.pause_game_button['text'] = "unpause"
+        else:
+            self.search.is_paused = False
+            self.pause_button_on = False
+            self.pause_game_button['text'] = "pause"
+
+    def reset_game(self):
+        self.keep_ticking = False
+        self.abalone = Abalone()
+        self.apply_board()
+        self.timer_frame['text'] = "TimerFrame"
+
+        # self.gui()
 
     def gui(self):
         self.root.geometry("1600x800")
@@ -175,6 +217,19 @@ class GUI:
         start_game_button = Button(self.root, text="Start Game - starts timer", padx=2,
                                    command=self.start_timer)
         start_game_button.place(x=600, y=400)
+
+        settings_game_button = Button(self.root, text="Settings", padx=2, command=self.start_settings, width=18)
+        settings_game_button.place(x=600, y=440)
+
+        self.pause_game_button = Button(self.root, text="Pause", padx=2, command=self.pause_game, width=18)
+        self.pause_game_button.place(x=600, y=480)
+
+        reset_game_button = Button(self.root, text="reset", padx=2, command=self.reset_game, width=18)
+        reset_game_button.place(x=600, y=520)
+        #
+        # start_game_button = Button(self.root, text="Start Game - starts timer", padx=2,
+        #                            command=self.start_timer)
+        # start_game_button.place(x=600, y=400)
 
         buttonI5 = Button(self.root, text="I5", height=2, width=5)
         buttonI5.place(x=125, y=25)
@@ -375,6 +430,7 @@ class GUI:
             ("I", 9): buttonI9,
         }
 
+        # self.abalone = Abalone()
         self.apply_board()
 
         buttonNE = Button(self.root, text="NORTH-EAST", height=5, width=10)
@@ -409,14 +465,14 @@ class GUI:
             value.bind("<Button-1>", self.add_to_group)
 
         player1_label = Label(self.root, text="Player 1")
-        player1_label.place(x=850, y=30)
-        player1_history = tkinter.Text(self.root, width=40, height=20, name='player1_history')
-        player1_history.place(x=850, y=50)
+        player1_label.place(x=850, y=20)
+        player1_history = tkinter.Text(self.root, width=48, height=20, name='player1_butts')
+        player1_history.place(x=850, y=40)
 
         player2_label = Label(self.root, text="Player 2")
-        player2_label.place(x=1200, y=30)
-        player2_history = tkinter.Text(self.root, width=48, height=20, name='player2_history')
-        player2_history.place(x=1200, y=50)
+        player2_label.place(x=850, y=400)
+        player2_history = tkinter.Text(self.root, width=48, height=20, name='player2_butts')
+        player2_history.place(x=850, y=420)
 
         white_score = Label(self.root, text="0", font=("Courier", 40), fg="red", name="player2_score")
         white_score.place(x=600, y=200)
