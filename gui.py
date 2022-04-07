@@ -26,7 +26,6 @@ class GUI:
         self.pause_button_on = False
         self.pause_game_button = None
         self.keep_ticking = True
-        self.th = None
 
     def reset_completed(self):
         self.move_string = ""
@@ -68,8 +67,8 @@ class GUI:
         timer = Label(self.timer_frame)
         ts = int(t)
         # th = threading.Thread(target=cd,args=[timer, ts])
-        self.th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
-        self.th.start()
+        th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
+        th.start()
 
     def add_direction(self, event):
         # resets timer after player has made a choice
