@@ -34,6 +34,7 @@ class GUI:
         self.player1_time = []
         self.player2_time = []
         self.history = []
+        self.turn_limit = 10
         # replace values of current/non_current_turn_player params with updated data obtained from when user inputs
         # settings info.
         # These params are for helping the timer know what to do when it hits 0; should the timer call the AI search,
@@ -60,36 +61,45 @@ class GUI:
         while ts > 0:
             while self.search.is_paused:
                 time.sleep(1)
+
+            # pause timer if player turn
+            # if current_player_type == player.HumanPlayer:
+            #     while self.search.is_paused:
+            #         time.sleep(1)
+
             timer_label_obj.config(text=ts)
             ts -= 0.25
             timer_label_obj.place(x=600, y=30)
             time.sleep(0.25)
             if not self.keep_looping:
-                # ts = self.time_limit
-                ts = self.time_limit
-                self.keep_looping = True
                 temp = self.current_turn_player
                 self.current_turn_player = self.non_current_turn_player
                 self.non_current_turn_player = temp
 
+                # ts = self.time_limit
+                ts = self.current_turn_player.turn_limit
+                self.keep_looping = True
+
+
+
             if ts == 0:
+                temp = self.current_turn_player
+                self.current_turn_player = self.non_current_turn_player
+                self.non_current_turn_player = temp
+                ts = self.current_turn_player.turn_limit
                 timer_label_obj.config(text=ts)
                 self.pause_game()  # Just pause the game to indicate end, we restart game after agent error.
 
                 # # ts = self.time_limit
-                # ts = self.time_limit
                 # self.keep_looping = True
                 # # the following code logic here to check whose player turn has let their time limit hit 0; for that
                 # # player, SKIP their turn, and give control to other player (timer is reset with above two lines
                 # # already)
-                # if self.current_turn_player == player.HumanPlayer:
+                # if self.non_current_turn_player == player.HumanPlayer:
                 #     self.call_ai_search_when_player_turn_ends()
                 # else:
                 #     # Needs to cancel search algorithm, and let the player's turn start
                 #     self.ai_search_fast_enough = False
-                # temp = self.current_turn_player
-                # self.current_turn_player = self.non_current_turn_player
-                # self.non_current_turn_player = temp
 
             if self.reset_timer:
                 # ts = self.time_limit
@@ -145,9 +155,12 @@ class GUI:
         # resets timer after player has made a choice
         self.keep_looping = False
 
-        move_time = self.time_limit - getdouble(self.root.nametowidget('timer_frame').cget("text"))
+        move_time = self.time_limit - float(self.root.nametowidget('timer_frame').cget("text"))
 
         name = event.widget.cget("text")
+
+        self.current_turn_player.move_remaining -= 1
+        self.root.nametowidget('player1_move_limit').config(text=f"Moves Left: {self.current_turn_player.move_remaining}")
 
         if "NORTH" in name:
             self.add_to_move_string("1")
@@ -243,12 +256,15 @@ class GUI:
         self.ai_search_fast_enough = True
 
         start = time.time()
-        # ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.current_turn_player.turn_limit)
-        ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.time_limit)
+        ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.current_turn_player.turn_limit)
+        # ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.time_limit)
         end = time.time() - start
 
         self.search.seconds_passed = 0
         if self.ai_search_fast_enough:
+
+            self.current_turn_player.move_remaining -= 1
+            self.root.nametowidget('player2_move_limit').config(text=f"Moves Left: {self.current_turn_player.move_remaining}")
 
             board_history = copy.deepcopy(self.abalone.board)
             self.history.append(board_history)
@@ -315,10 +331,15 @@ class GUI:
         else:
             self.time_limit = self.non_current_turn_player.turn_limit
 
+        #self.turn_limit = self.current_turn_player.move_remaining
+        new_text = f"Moves Left: {self.current_turn_player.move_remaining}"
+        self.root.nametowidget('player1_move_limit').config(text=new_text)
+        self.root.nametowidget('player2_move_limit').config(text=new_text)
+
         self.reset_timer = False
         self.search.is_paused = False
-        # self.countdown(self.current_turn_player.turn_limit)
-        self.countdown(self.time_limit)
+        self.countdown(self.current_turn_player.turn_limit)
+        # self.countdown(self.time_limit)
         if type(self.current_turn_player) == player.AIPlayer:
             if type(self.abalone.players["Black"]) == player.AIPlayer:
                 # Generate random move for first move if AI is "Black"
@@ -377,6 +398,8 @@ class GUI:
 
     def undo_move(self):
         if len(self.history) >= 1:
+            self.non_current_turn_player.move_remaining += 1
+            self.root.nametowidget('player2_move_limit').config(text=f"Moves Left: {self.non_current_turn_player.move_remaining}")
             # Our AI would have made a move if we made a mistake, so we'll pop it too.
             extra_ai_move = self.history.pop()
             last_move_board = self.history.pop()
@@ -662,11 +685,17 @@ class GUI:
         player1_history = tkinter.Text(self.root, width=48, height=20, name='player1')
         player1_history.place(x=850, y=40)
 
+        player1_move_limit = Label(self.root, text="Moves Left: 0", name="player1_move_limit")
+        player1_move_limit.place(x=980, y=20)
+
         player1_time = Label(self.root, text="Total Time: 0.0000", name="player1_time")
         player1_time.place(x=1138, y=20)
 
         player2_time = Label(self.root, text="Total Time: 0.0000", name="player2_time")
         player2_time.place(x=1138, y=400)
+
+        player2_move_limit = Label(self.root, text="Moves Left: 0", name="player2_move_limit")
+        player2_move_limit.place(x=980, y=400)
 
         player2_label = Label(self.root, text="Player 2")
         player2_label.place(x=850, y=400)
