@@ -171,6 +171,7 @@ class GUI:
                 self.add_to_move_string("-1")
 
         move = Move.from_string(self.move_string)
+        move_time = self.time_limit - getdouble(self.root.nametowidget("timer_frame").cget("text"))
         print(self.move_string)
         print(move)
 
@@ -181,7 +182,6 @@ class GUI:
         self.apply_board()
         self.reset_completed()
         # update player move history
-        self.root.nametowidget('player1').insert(END, f"{move}\n")
         self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
         self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
 
@@ -191,6 +191,8 @@ class GUI:
             next_turn = "Current Turn: Blue"
             next_color = "blue"
 
+            self.root.nametowidget('player2').insert(END, f"{move}\t{move_time} sec\n")
+
             self.player2_time.append(move_time)
             total = sum(self.player2_time)
             new_text = f"Total Time: {total:.4f}"
@@ -199,6 +201,8 @@ class GUI:
             AI_color = "White"
             next_turn = "Current Turn: Red"
             next_color = "red"
+
+            self.root.nametowidget('player1').insert(END, f"{move}\t{move_time} sec\n")
 
             self.player1_time.append(move_time)
             total = sum(self.player1_time)
@@ -242,10 +246,9 @@ class GUI:
     def ai_search(self, color: StringVar, heuristic):
         self.ai_search_fast_enough = True
 
-        start = time.time()
         # ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.current_turn_player.turn_limit)
         ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.time_limit)
-        end = time.time() - start
+        end = self.time_limit - getdouble(self.root.nametowidget("timer_frame").cget("text"))
 
         self.search.seconds_passed = 0
         if self.ai_search_fast_enough:
@@ -254,13 +257,14 @@ class GUI:
             self.history.append(board_history)
 
             self.abalone.board.update_board(ai_move)
-            self.root.nametowidget('player2').insert(END, f"{ai_move}\t{end:.4f} sec\n")
             self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
             self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
 
             if color == "White":
                 next_text = "Current Turn: Blue"
                 next_color = "blue"
+
+                self.root.nametowidget('player2').insert(END, f"{ai_move}\t{end:.4f} sec\n")
 
                 self.player2_time.append(end)
                 total = sum(self.player2_time)
@@ -269,6 +273,8 @@ class GUI:
             else:
                 next_text = "Current Turn: Red"
                 next_color = "red"
+
+                self.root.nametowidget('player1').insert(END, f"{ai_move}\t{end:.4f} sec\n")
 
                 self.player1_time.append(end)
                 total = sum(self.player1_time)
@@ -392,6 +398,9 @@ class GUI:
 
             new_text = f"Total Time: {total2:.4f}"
             self.root.nametowidget('player2_time').config(text=new_text)
+
+            self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
+            self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
 
             self.apply_board()
 
