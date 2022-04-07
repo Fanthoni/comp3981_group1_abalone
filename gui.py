@@ -153,7 +153,7 @@ class GUI:
         # resets timer after player has made a choice
         self.keep_looping = False
 
-        move_time = self.time_limit - float(self.root.nametowidget('timer_frame').cget("text"))
+        move_time = abs(self.time_limit - float(self.root.nametowidget('timer_frame').cget("text")))
 
         name = event.widget.cget("text")
 
@@ -202,7 +202,7 @@ class GUI:
             next_turn = "Current Turn: Blue"
             next_color = "blue"
 
-            self.root.nametowidget('player2').insert(END, f"{move}\t{move_time} sec\n")
+            self.root.nametowidget('player2').insert(END, f"{move}\t{move_time:.4f} sec\n")
 
             self.player2_time.append(move_time)
             total = sum(self.player2_time)
@@ -213,7 +213,7 @@ class GUI:
             next_turn = "Current Turn: Red"
             next_color = "red"
 
-            self.root.nametowidget('player1').insert(END, f"{move}\t{move_time} sec\n")
+            self.root.nametowidget('player1').insert(END, f"{move}\t{move_time:.4f} sec\n")
 
             self.player1_time.append(move_time)
             total = sum(self.player1_time)
@@ -693,7 +693,7 @@ class GUI:
 
         player1_label = Label(self.root, text="Player 1")
         player1_label.place(x=850, y=20)
-        player1_history = tkinter.Text(self.root, width=48, height=20, name='player1')
+        player1_history = tkinter.Text(self.root, width=55, height=20, name='player1')
         player1_history.place(x=850, y=40)
 
         player1_move_limit = Label(self.root, text="Moves Left: 0", name="player1_move_limit")
@@ -710,7 +710,7 @@ class GUI:
 
         player2_label = Label(self.root, text="Player 2")
         player2_label.place(x=850, y=400)
-        player2_history = tkinter.Text(self.root, width=48, height=20, name='player2')
+        player2_history = tkinter.Text(self.root, width=55, height=20, name='player2')
         player2_history.place(x=850, y=420)
 
         white_score = Label(self.root, text="0", font=("Courier", 40), fg="red", name="player2_score")

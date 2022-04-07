@@ -103,7 +103,7 @@ class Search:
         if depth > Depth.NODE_ORDERING_ACTIVATED:  # Node ordering at certain depths, otherwise ordering takes too long
             valid_moves = self._order_nodes(state, valid_moves, heuristic, True)
         for action in valid_moves:
-            if time.time() - start_time >= self.time_limit - 2:  # TODO: Change to player time limit; Currently limited to 8 seconds.
+            if time.time() - start_time >= self.time_limit - 1.5:  # TODO: Change to player time limit; Currently limited to 8 seconds.
                 return value
             new_state = state.get_board_after_move(action)
             temp = self.min_value(new_state, alpha, beta, depth - 1, heuristic)
