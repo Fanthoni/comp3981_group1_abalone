@@ -67,10 +67,10 @@ class GUI:
             #     while self.search.is_paused:
             #         time.sleep(1)
 
-            timer_label_obj.config(text=ts)
-            ts -= 0.25
+            timer_label_obj.config(text=f"{ts:.4f}")
+            ts -= 0.1055
             timer_label_obj.place(x=600, y=30)
-            time.sleep(0.25)
+            time.sleep(0.1055)
             if not self.keep_looping:
                 temp = self.current_turn_player
                 self.current_turn_player = self.non_current_turn_player
@@ -79,8 +79,6 @@ class GUI:
                 # ts = self.time_limit
                 ts = self.current_turn_player.turn_limit
                 self.keep_looping = True
-
-
 
             if ts == 0:
                 temp = self.current_turn_player
@@ -160,7 +158,8 @@ class GUI:
         name = event.widget.cget("text")
 
         self.current_turn_player.move_remaining -= 1
-        self.root.nametowidget('player1_move_limit').config(text=f"Moves Left: {self.current_turn_player.move_remaining}")
+        self.root.nametowidget('player1_move_limit').config(
+            text=f"Moves Left: {self.current_turn_player.move_remaining}")
 
         if "NORTH" in name:
             self.add_to_move_string("1")
@@ -221,7 +220,6 @@ class GUI:
             new_text = f"Total Time: {total:.4f}"
             self.root.nametowidget('player1_time').config(text=new_text)
 
-
         self.root.nametowidget('current_turn').config(text=next_turn, fg=next_color)
 
         self.root.update()
@@ -266,7 +264,8 @@ class GUI:
         if self.ai_search_fast_enough:
 
             self.current_turn_player.move_remaining -= 1
-            self.root.nametowidget('player2_move_limit').config(text=f"Moves Left: {self.current_turn_player.move_remaining}")
+            self.root.nametowidget('player2_move_limit').config(
+                text=f"Moves Left: {self.current_turn_player.move_remaining}")
 
             board_history = copy.deepcopy(self.abalone.board)
             self.history.append(board_history)
@@ -336,7 +335,7 @@ class GUI:
         else:
             self.time_limit = self.non_current_turn_player.turn_limit
 
-        #self.turn_limit = self.current_turn_player.move_remaining
+        # self.turn_limit = self.current_turn_player.move_remaining
         new_text = f"Moves Left: {self.current_turn_player.move_remaining}"
         self.root.nametowidget('player1_move_limit').config(text=new_text)
         self.root.nametowidget('player2_move_limit').config(text=new_text)
@@ -404,7 +403,11 @@ class GUI:
     def undo_move(self):
         if len(self.history) >= 1:
             self.non_current_turn_player.move_remaining += 1
-            self.root.nametowidget('player2_move_limit').config(text=f"Moves Left: {self.non_current_turn_player.move_remaining}")
+            self.current_turn_player.move_remaining += 1
+            self.root.nametowidget('player2_move_limit').config(
+                text=f"Moves Left: {self.non_current_turn_player.move_remaining}")
+            self.root.nametowidget('player1_move_limit').config(
+                text=f"Moves Left: {self.current_turn_player.move_remaining}")
             # Our AI would have made a move if we made a mistake, so we'll pop it too.
             extra_ai_move = self.history.pop()
             last_move_board = self.history.pop()
@@ -446,7 +449,7 @@ class GUI:
         reset_game_button = Button(self.root, text="Reset", padx=2, command=self.reset_game, width=18)
         reset_game_button.place(x=600, y=520)
 
-        undo_button = Button(self.root, text="Undo", padx=2, command= self.undo_move, width = 18)
+        undo_button = Button(self.root, text="Undo", padx=2, command=self.undo_move, width=18)
         undo_button.place(x=600, y=560)
 
         # ############################################################## #
