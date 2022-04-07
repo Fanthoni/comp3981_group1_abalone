@@ -14,7 +14,12 @@ class Heuristic:
     CENTER_OF_MASS_WEIGHT = 4
     PROXIMITY_WEIGHT = 2
     MOBILITY_WEIGHT = 1
-    MARBLE_COUNT_WEIGHT = 8
+    MARBLE_COUNT_WEIGHT = 10
+
+    # CENTER_OF_MASS_WEIGHT = 3
+    # PROXIMITY_WEIGHT = 3
+    # MOBILITY_WEIGHT = 1
+    # MARBLE_COUNT_WEIGHT = 6
 
     @staticmethod
     def evaluate_board(board) -> int:
@@ -65,16 +70,6 @@ class Heuristic:
         Heuristic.black_score += (black_center_score / Heuristic.black_marble_count) * Heuristic.CENTER_OF_MASS_WEIGHT
         Heuristic.white_score += (white_center_score / Heuristic.white_marble_count) * Heuristic.CENTER_OF_MASS_WEIGHT
 
-    # @staticmethod
-    # def _calculate_manhattan_distance(tile1, tile2) -> int:
-    #     """
-    #     Calculates the manhattan distance of cell1 from cell2
-    #     :param tile1: a Tuple - board coordinate
-    #     :param tile2: a Tuple - board coordinate
-    #     :return: a positive integer
-    #     """
-    #     return abs(ord(tile1[0]) - ord(tile2[0])) + abs(tile1[1] - tile2[1])
-
     @staticmethod
     def _calculate_manhattan_distance(tile1, tile2) -> int:
         """
@@ -83,9 +78,19 @@ class Heuristic:
         :param tile2: a Tuple - board coordinate
         :return: a positive integer
         """
-        distance = abs(ord(tile1[0]) - ord(tile2[0])) + abs(tile1[1] - tile2[1])
-        distance = distance * 2 if tile1[0] == 'E' or tile1[1] == 5 else distance
-        return distance
+        return abs(ord(tile1[0]) - ord(tile2[0])) + abs(tile1[1] - tile2[1])
+
+    # @staticmethod
+    # def _calculate_manhattan_distance(tile1, tile2) -> int:
+    #     """
+    #     Calculates the manhattan distance of cell1 from cell2
+    #     :param tile1: a Tuple - board coordinate
+    #     :param tile2: a Tuple - board coordinate
+    #     :return: a positive integer
+    #     """
+    #     distance = abs(ord(tile1[0]) - ord(tile2[0])) + abs(tile1[1] - tile2[1])
+    #     distance = distance * 2 if tile1[0] == 'E' or tile1[1] == 5 else distance
+    #     return distance
 
     @staticmethod
     def _evaluate_proximity():

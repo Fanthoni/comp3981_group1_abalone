@@ -281,10 +281,6 @@ def main():
     abalone.board.generate_all_possible_moves_and_resulting_boards(abalone.current_player, input_file_name)
 
 
-
 if __name__ == "__main__":
     main()
-
-
-
 
