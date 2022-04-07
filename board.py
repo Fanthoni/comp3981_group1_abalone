@@ -26,7 +26,6 @@ class StartingPositions(Enum):
 class Board:
     def __init__(self, board_choice):
         self._board = Board.make_board(board_choice)
-        self._history = []
 
     @property
     def board(self):
@@ -442,9 +441,6 @@ class Board:
         :param move: a Move object
         :return: a new Board object
         """
-        board_history = copy.deepcopy(self)
-        self._history.append(board_history)
-
         board_copy = copy.deepcopy(self)
 
         if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(
@@ -653,7 +649,3 @@ class Board:
             board_file_writer.write_board(board)
 
         print(f"move and board files are generated under testOutput directory")
-
-    @property
-    def history(self):
-        return self._history

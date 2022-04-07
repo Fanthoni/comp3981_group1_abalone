@@ -55,7 +55,7 @@ class Search:
         return action
 
     @staticmethod
-    def _order_nodes(state: Board, valid_moves: list, heuristic: Heuristic) -> list:
+    def _order_nodes(state: Board, valid_moves: list, heuristic: Heuristic, reverse: bool) -> list:
         """
         Helper function used to order nodes.
 
@@ -69,7 +69,7 @@ class Search:
             node_value = heuristic.evaluate_board(new_state)
 
             ordered_nodes.append((node_value, action))
-        ordered_nodes = sorted(ordered_nodes, key=lambda tup: tup[0], reverse=True)
+        ordered_nodes = sorted(ordered_nodes, key=lambda tup: tup[0], reverse=reverse)
 
         for node_value, action in ordered_nodes:
             actions.append(action)
@@ -101,9 +101,9 @@ class Search:
         value = InfiniteValues.NEG_INF
 
         if depth > Depth.NODE_ORDERING_ACTIVATED:  # Node ordering at certain depths, otherwise ordering takes too long
-            valid_moves = self._order_nodes(state, valid_moves, heuristic)
+            valid_moves = self._order_nodes(state, valid_moves, heuristic, True)
         for action in valid_moves:
-            if time.time() - start_time >= self.time_limit - 1:  # TODO: Change to player time limit; Currently limited to 9 seconds.
+            if time.time() - start_time >= self.time_limit - 2:  # TODO: Change to player time limit; Currently limited to 8 seconds.
                 return value
             new_state = state.get_board_after_move(action)
             temp = self.min_value(new_state, alpha, beta, depth - 1, heuristic)
@@ -140,7 +140,7 @@ class Search:
         valid_moves = state.generate_moves(groups)
 
         if depth > Depth.NODE_ORDERING_ACTIVATED:  # Order nodes
-            valid_moves = self._order_nodes(state, valid_moves, heuristic)
+            valid_moves = self._order_nodes(state, valid_moves, heuristic, False)
         for action in valid_moves:
             if time.time() - start_time >= self.time_limit - 1:
                 break

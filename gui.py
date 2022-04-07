@@ -1,6 +1,9 @@
+import copy
 import tkinter
 import time
 import threading
+from random import randint
+
 from abalone_settings_ui import SettingsMenu
 from tkinter import *
 import player
@@ -28,6 +31,9 @@ class GUI:
         self.pause_game_button = None
         self.reset_timer = False
         self.ai_search_fast_enough = True
+        self.player1_time = []
+        self.player2_time = []
+        self.history = []
         # replace values of current/non_current_turn_player params with updated data obtained from when user inputs
         # settings info.
         # These params are for helping the timer know what to do when it hits 0; should the timer call the AI search,
@@ -55,9 +61,9 @@ class GUI:
             while self.search.is_paused:
                 time.sleep(1)
             timer_label_obj.config(text=ts)
-            ts -= 1
+            ts -= 0.25
             timer_label_obj.place(x=600, y=30)
-            time.sleep(1)
+            time.sleep(0.25)
             if not self.keep_looping:
                 # ts = self.time_limit
                 ts = self.time_limit
@@ -139,6 +145,8 @@ class GUI:
         # resets timer after player has made a choice
         self.keep_looping = False
 
+        move_time = self.time_limit - getdouble(self.root.nametowidget('timer_frame').cget("text"))
+
         name = event.widget.cget("text")
 
         if "NORTH" in name:
@@ -165,6 +173,10 @@ class GUI:
         move = Move.from_string(self.move_string)
         print(self.move_string)
         print(move)
+
+        board_history = copy.deepcopy(self.abalone.board)
+        self.history.append(board_history)
+
         self.abalone.board.update_board(move)
         self.apply_board()
         self.reset_completed()
@@ -178,10 +190,21 @@ class GUI:
             AI_color = "Black"
             next_turn = "Current Turn: Blue"
             next_color = "blue"
+
+            self.player2_time.append(move_time)
+            total = sum(self.player2_time)
+            new_text = f"Total Time: {total:.4f}"
+            self.root.nametowidget('player2_time').config(text=new_text)
         else:
             AI_color = "White"
             next_turn = "Current Turn: Red"
             next_color = "red"
+
+            self.player1_time.append(move_time)
+            total = sum(self.player1_time)
+            new_text = f"Total Time: {total:.4f}"
+            self.root.nametowidget('player1_time').config(text=new_text)
+
 
         self.root.nametowidget('current_turn').config(text=next_turn, fg=next_color)
 
@@ -218,24 +241,39 @@ class GUI:
 
     def ai_search(self, color: StringVar, heuristic):
         self.ai_search_fast_enough = True
-        seconds = time.time()
+
+        start = time.time()
         # ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.current_turn_player.turn_limit)
-        ai_move = self.search.ab_search(self.abalone.board, color, heuristic, 5)
-        time_passed = time.time() - seconds - self.search.seconds_passed
+        ai_move = self.search.ab_search(self.abalone.board, color, heuristic, self.time_limit)
+        end = time.time() - start
 
         self.search.seconds_passed = 0
         if self.ai_search_fast_enough:
+
+            board_history = copy.deepcopy(self.abalone.board)
+            self.history.append(board_history)
+
             self.abalone.board.update_board(ai_move)
-            self.root.nametowidget('player2').insert(END, f"{ai_move}\t{time_passed:.4f} sec\n")
+            self.root.nametowidget('player2').insert(END, f"{ai_move}\t{end:.4f} sec\n")
             self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
             self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
 
             if color == "White":
                 next_text = "Current Turn: Blue"
                 next_color = "blue"
+
+                self.player2_time.append(end)
+                total = sum(self.player2_time)
+                new_text = f"Total Time: {total:.4f}"
+                self.root.nametowidget('player2_time').config(text=new_text)
             else:
                 next_text = "Current Turn: Red"
                 next_color = "red"
+
+                self.player1_time.append(end)
+                total = sum(self.player1_time)
+                new_text = f"Total Time: {total:.4f}"
+                self.root.nametowidget('player1_time').config(text=new_text)
 
             self.root.nametowidget('current_turn').config(text=next_text, fg=next_color)
 
@@ -283,7 +321,30 @@ class GUI:
         self.countdown(self.time_limit)
         if type(self.current_turn_player) == player.AIPlayer:
             if type(self.abalone.players["Black"]) == player.AIPlayer:
-                self.call_ai_search_when_player_turn_ends("Black")
+                # Generate random move for first move if AI is "Black"
+                start = time.time()
+
+                state = self.abalone.board
+                groups = state.get_marble_groups(BoardTile.BLUE)
+                valid_moves = state.generate_moves(groups)
+                index = randint(0, len(valid_moves) - 1)
+
+                ai_move = valid_moves[index]
+
+                end = time.time() - start
+
+                self.root.nametowidget('player1').insert(END, f"{ai_move}\t{end:.4f} sec\n")
+
+                board_history = copy.deepcopy(self.abalone.board)
+                self.history.append(board_history)
+
+                self.player1_time.append(end)
+                total = sum(self.player1_time)
+                new_text = f"Total Time: {total:.4f}"
+                self.root.nametowidget('player1_time').config(text=new_text)
+
+                self.abalone.board.update_board(ai_move)
+                self.apply_board()
             else:
                 self.call_ai_search_when_player_turn_ends("White")
 
@@ -315,17 +376,30 @@ class GUI:
         self.apply_board()
 
     def undo_move(self):
-        history = self.abalone.board.history
-        if len(history) >= 1:
-            last_move_board = history[-1]
+        if len(self.history) >= 1:
+            # Our AI would have made a move if we made a mistake, so we'll pop it too.
+            extra_ai_move = self.history.pop()
+            last_move_board = self.history.pop()
             self.abalone.board = last_move_board
+
+            self.player1_time.pop()
+            self.player2_time.pop()
+            total1 = sum(self.player1_time)
+            total2 = sum(self.player2_time)
+
+            new_text = f"Total Time: {total1:.4f}"
+            self.root.nametowidget('player1_time').config(text=new_text)
+
+            new_text = f"Total Time: {total2:.4f}"
+            self.root.nametowidget('player2_time').config(text=new_text)
+
             self.apply_board()
 
     def gui(self):
         self.root.geometry("1600x800")
         self.root.configure(background="darkgrey")
 
-        self.timer_frame = Label(self.root, text="TimerFrame", height=5, width=20)
+        self.timer_frame = Label(self.root, text="TimerFrame", height=5, width=20, name="timer_frame")
         self.timer_frame.place(x=600, y=30)
 
         start_game_button = Button(self.root, text="Start Game - starts timer", padx=2,
@@ -587,6 +661,12 @@ class GUI:
         player1_label.place(x=850, y=20)
         player1_history = tkinter.Text(self.root, width=48, height=20, name='player1')
         player1_history.place(x=850, y=40)
+
+        player1_time = Label(self.root, text="Total Time: 0.0000", name="player1_time")
+        player1_time.place(x=1138, y=20)
+
+        player2_time = Label(self.root, text="Total Time: 0.0000", name="player2_time")
+        player2_time.place(x=1138, y=400)
 
         player2_label = Label(self.root, text="Player 2")
         player2_label.place(x=850, y=400)
