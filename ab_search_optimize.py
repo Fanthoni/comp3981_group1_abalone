@@ -24,6 +24,7 @@ class Search:
         self.seconds_passed = 0
         self.is_paused = False
         self.past = None
+        self.time_limit = 10
 
     def terminal_test(self, state):
         """
@@ -35,7 +36,7 @@ class Search:
             return True
         return False
 
-    def ab_search(self, state: Board, current_player: str, heuristic: Heuristic):
+    def ab_search(self, state: Board, current_player: str, heuristic: Heuristic, time_limit):
         """
         "Starter" for the alpha-beta search, includes variable represent depth searched by minimax.
         :param state: Board object
@@ -43,7 +44,8 @@ class Search:
         :param heuristic: a Heuristic object
         """
         self.past = time.time()
-        depth = 4  # If changing this value, change START value in Depth Enum to match
+        self.time_limit = time_limit
+        depth = 3  # If changing this value, change START value in Depth Enum to match
         if current_player == "Black":
             value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth, heuristic)
         else:
@@ -83,7 +85,8 @@ class Search:
         :param depth: depth used in depth iterative search
         :param heuristic: a Heuristic object
         """
-        # Test for pause state; is so count time passes until un-paused
+        # Test for pause state; used to account for paused time when leaving algo and ultimately counting total
+        # search time
         start_time = time.time()
         while self.is_paused:
             time.sleep(1)
@@ -100,7 +103,7 @@ class Search:
         if depth > Depth.NODE_ORDERING_ACTIVATED:  # Node ordering at certain depths, otherwise ordering takes too long
             valid_moves = self._order_nodes(state, valid_moves, heuristic)
         for action in valid_moves:
-            if time.time() - start_time >= 9:  # TODO: Change to player time limit; Currently limited to 9 seconds.
+            if time.time() - start_time >= self.time_limit - 1:  # TODO: Change to player time limit; Currently limited to 9 seconds.
                 return value
             new_state = state.get_board_after_move(action)
             temp = self.min_value(new_state, alpha, beta, depth - 1, heuristic)
@@ -139,7 +142,7 @@ class Search:
         if depth > Depth.NODE_ORDERING_ACTIVATED:  # Order nodes
             valid_moves = self._order_nodes(state, valid_moves, heuristic)
         for action in valid_moves:
-            if time.time() - start_time >= 9:
+            if time.time() - start_time >= self.time_limit - 1:
                 break
             new_state = state.get_board_after_move(action)
             temp = self.max_value(new_state, alpha, beta, depth - 1, heuristic)

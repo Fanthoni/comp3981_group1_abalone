@@ -134,6 +134,8 @@ class SettingsMenu:
         self._game.set_player2(SettingsMenu.construct_player(
             move_limit_per_player, player2_time_limit, player2_mode))
 
+        self._game.reset_board()
+
         self._root.destroy()  # close the settings window
 
     @staticmethod
