@@ -24,7 +24,7 @@ class Search:
         self.seconds_passed = 0
         self.is_paused = False
         self.past = None
-        self.time_limit = 10
+        self.time_limit = 5
 
     def terminal_test(self, state):
         """
@@ -45,7 +45,7 @@ class Search:
         """
         self.past = time.time()
         self.time_limit = time_limit
-        depth = 3  # If changing this value, change START value in Depth Enum to match
+        depth = 2  # If changing this value, change START value in Depth Enum to match
         if current_player == "Black":
             value = self.max_value(state, InfiniteValues.NEG_INF, InfiniteValues.POS_INF, depth, heuristic)
         else:

@@ -26,6 +26,7 @@ class StartingPositions(Enum):
 class Board:
     def __init__(self, board_choice):
         self._board = Board.make_board(board_choice)
+        self._history = []
 
     @property
     def board(self):
@@ -279,7 +280,6 @@ class Board:
         """
         return 14 - len({key for key, value in self._board.items() if value in [BoardTile.RED]})
 
-
     def setup_board_from_moves(self, moves):
         """
         Translate a board setup from an array of moves into a board layout.
@@ -442,10 +442,15 @@ class Board:
         :param move: a Move object
         :return: a new Board object
         """
+        board_history = copy.deepcopy(self)
+        self._history.append(board_history)
+
         board_copy = copy.deepcopy(self)
 
-        if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(move.marble_group):
-            if len(move.marble_group) > 1 and not self._is_marble_group_in_correct_direction(move.marble_group, move.direction.value):
+        if len(move.marble_group) == 1 or move.direction.value in self._get_marble_group_inline_directions(
+                move.marble_group):
+            if len(move.marble_group) > 1 and not self._is_marble_group_in_correct_direction(move.marble_group,
+                                                                                             move.direction.value):
                 return self.get_board_after_move(Move(tuple(reversed(move.marble_group)), move.direction))
 
             colour_queue = []
@@ -461,7 +466,8 @@ class Board:
             current_tile = self.get_next_tile(starting_tile, move.direction.value)
             while len(colour_queue) > 0:
                 colour_to_fill_in = colour_queue.pop(0)
-                board_copy.board[current_tile] = colour_to_fill_in if board_copy.board[current_tile] != BoardTile.BORDER else BoardTile.BORDER
+                board_copy.board[current_tile] = colour_to_fill_in if board_copy.board[
+                                                                          current_tile] != BoardTile.BORDER else BoardTile.BORDER
                 current_tile = self.get_next_tile(current_tile, move.direction.value)
             board_copy.board[starting_tile] = BoardTile.EMPTY
         else:
@@ -605,10 +611,12 @@ class Board:
                 next_next_head = self.get_next_tile(next_head, direction.value)
                 if self.get_next_tile_value(group_tail, direction.value) == opposite_colour \
                         and self.get_next_tile_value(next_tail, direction.value) == opposite_colour \
-                        and self.get_next_tile_value(next_next_tail, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER] \
+                        and self.get_next_tile_value(next_next_tail, direction.value) in [BoardTile.EMPTY,
+                                                                                          BoardTile.BORDER] \
                         or self.get_next_tile_value(group_head, direction.value) == opposite_colour \
                         and self.get_next_tile_value(next_head, direction.value) == opposite_colour \
-                        and self.get_next_tile_value(next_next_head, direction.value) in [BoardTile.EMPTY, BoardTile.BORDER]:
+                        and self.get_next_tile_value(next_next_head, direction.value) in [BoardTile.EMPTY,
+                                                                                          BoardTile.BORDER]:
                     possible_moves.append(direction)
             else:
                 # Check for possible sidesteps.
@@ -645,3 +653,7 @@ class Board:
             board_file_writer.write_board(board)
 
         print(f"move and board files are generated under testOutput directory")
+
+    @property
+    def history(self):
+        return self._history
