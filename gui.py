@@ -250,7 +250,7 @@ class GUI:
         if type(self.current_turn_player) == player.AIPlayer:
             self.time_limit = self.current_turn_player.turn_limit
         else:
-            self.time_limit = self.non_current_turn_player
+            self.time_limit = self.non_current_turn_player.turn_limit
 
         self.reset_timer = False
         self.search.is_paused = False
