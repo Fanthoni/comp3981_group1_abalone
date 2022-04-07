@@ -330,10 +330,11 @@ class GUI:
         self.current_turn_player = self.abalone.players["Black"]
         self.non_current_turn_player = self.abalone.players["White"]
 
-        if type(self.current_turn_player) == player.AIPlayer:
-            self.time_limit = self.current_turn_player.turn_limit
-        else:
-            self.time_limit = self.non_current_turn_player.turn_limit
+        # if type(self.current_turn_player) == player.AIPlayer:
+        #     self.time_limit = self.current_turn_player.turn_limit
+        # else:
+        #     self.time_limit = self.non_current_turn_player.turn_limit
+        self.time_limit = self.current_turn_player.turn_limit
 
         # self.turn_limit = self.current_turn_player.move_remaining
         new_text = f"Moves Left: {self.current_turn_player.move_remaining}"
@@ -370,6 +371,7 @@ class GUI:
 
                 self.abalone.board.update_board(ai_move)
                 self.apply_board()
+                self.keep_looping = False
             else:
                 self.call_ai_search_when_player_turn_ends("White")
 
