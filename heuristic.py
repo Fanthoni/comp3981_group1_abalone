@@ -11,10 +11,10 @@ class Heuristic:
     black_marble_count = 0
     white_marble_count = 0
 
-    CENTER_OF_MASS_WEIGHT = 4
+    CENTER_OF_MASS_WEIGHT = 3
     PROXIMITY_WEIGHT = 2
     MOBILITY_WEIGHT = 1
-    MARBLE_COUNT_WEIGHT = 10
+    MARBLE_COUNT_WEIGHT = 8
 
     # CENTER_OF_MASS_WEIGHT = 3
     # PROXIMITY_WEIGHT = 3
