@@ -78,7 +78,7 @@ class Move(ABC):
         for tile in arr:
             new_tile = (tile[0], int(tile[1]))
             group.append(new_tile)
-        return group
+        return sorted(group)
 
     @staticmethod
     def get_move_direction_from_array(arr):
@@ -122,8 +122,7 @@ class Move(ABC):
             self.move(formation, board)
 
     def __str__(self):
-        return f"Move marble: {self._marble_group}" \
-               f"\nDirection: {self.direction}"
+        return f"{self._marble_group} {self.direction.value}"
 
 
 def main():

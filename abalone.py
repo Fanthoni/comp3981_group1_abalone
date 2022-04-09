@@ -11,12 +11,12 @@ class Abalone:
     """
 
     def __init__(self):
-        self._board = None
-        self._players = {"Black": None, "White": None}
+        self.players = {"Black": None, "White": None}
         self._current_player = "Black"
         self._is_game_paused = False
         self._is_game_stopped = False
-        self._game_mode = StartingPositions.DEFAULT
+        self._game_mode = StartingPositions.BELGIAN
+        self._board = Board(self._game_mode)
 
     def start_game(self):
         """
@@ -225,13 +225,13 @@ class Abalone:
         """
         Sets a player to black.
         """
-        self._players["Black"] = player
+        self.players["Black"] = player
 
     def set_player2(self, player):
         """
         Sets a player to white.
         """
-        self._players["White"] = player
+        self.players["White"] = player
 
     @property
     def board(self):
@@ -270,6 +270,9 @@ class Abalone:
     def player2(self):
         return self._players["White"]
 
+    def reset_board(self):
+        self.board = Board(self._game_mode)
+
 
 def main():
     abalone = Abalone()
@@ -278,10 +281,6 @@ def main():
     abalone.board.generate_all_possible_moves_and_resulting_boards(abalone.current_player, input_file_name)
 
 
-
 if __name__ == "__main__":
     main()
-
-
-
 
