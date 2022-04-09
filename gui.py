@@ -35,10 +35,6 @@ class GUI:
         self.player2_time = []
         self.history = []
         self.turn_limit = 10
-        # replace values of current/non_current_turn_player params with updated data obtained from when user inputs
-        # settings info.
-        # These params are for helping the timer know what to do when it hits 0; should the timer call the AI search,
-        # or wait for a move from the player? etc.
         self.current_turn_player = None  # player.HumanPlayer(10, 10)
         self.non_current_turn_player = None  # player.AIPlayer(10, 10)
 
@@ -62,11 +58,6 @@ class GUI:
             while self.search.is_paused:
                 time.sleep(1)
 
-            # pause timer if player turn
-            # if current_player_type == player.HumanPlayer:
-            #     while self.search.is_paused:
-            #         time.sleep(1)
-
             timer_label_obj.config(text=f"{ts:.4f}")
             ts -= 0.1055
             timer_label_obj.place(x=600, y=30)
@@ -88,64 +79,13 @@ class GUI:
                 timer_label_obj.config(text=ts)
                 self.pause_game()  # Just pause the game to indicate end, we restart game after agent error.
 
-                # # ts = self.time_limit
-                # self.keep_looping = True
-                # # the following code logic here to check whose player turn has let their time limit hit 0; for that
-                # # player, SKIP their turn, and give control to other player (timer is reset with above two lines
-                # # already)
-                # if self.non_current_turn_player == player.HumanPlayer:
-                #     self.call_ai_search_when_player_turn_ends()
-                # else:
-                #     # Needs to cancel search algorithm, and let the player's turn start
-                #     self.ai_search_fast_enough = False
-
             if self.reset_timer:
                 # ts = self.time_limit
                 ts = self.time_limit
                 self.search.is_paused = True
 
-    # def cd(self, timer_label_obj, ts):
-    #     while ts > 0:
-    #         while self.search.is_paused:
-    #             time.sleep(1)
-    #         timer_label_obj.config(text=ts)
-    #         ts -= 1
-    #         timer_label_obj.place(x=600, y=30)
-    #         time.sleep(1)
-    #         if not self.keep_looping:
-    #             # ts = self.time_limit
-    #             ts = self.current_turn_player.turn_limit
-    #             self.keep_looping = True
-    #             temp = self.current_turn_player
-    #             self.current_turn_player = self.non_current_turn_player
-    #             self.non_current_turn_player = temp
-    #
-    #         if ts == 0:
-    #             # ts = self.time_limit
-    #             ts = self.current_turn_player.turn_limit
-    #             self.keep_looping = True
-    #             # the following code logic here to check whose player turn has let their time limit hit 0; for that
-    #             # player, SKIP their turn, and give control to other player (timer is reset with above two lines
-    #             # already)
-    #             if self.current_turn_player == plauer.HumanPlayer:
-    #                 self.call_ai_search_when_player_turn_ends()
-    #             else:
-    #                 # Needs to cancel search algorithm, and let the player's turn start
-    #                 self.ai_search_fast_enough = False
-    #             temp = self.current_turn_player
-    #             self.current_turn_player = self.non_current_turn_player
-    #             self.non_current_turn_player = temp
-    #
-    #         if self.reset_timer:
-    #             # ts = self.time_limit
-    #             ts = self.current_turn_player.turn_limit
-    #             self.search.is_paused = True
-
     def countdown(self, t):
-        # timer = Label(self.timer_frame)
-        # ts = int(t)
         ts = t
-        # th = threading.Thread(target=cd,args=[timer, ts])
         th = threading.Thread(target=self.cd, args=[self.timer_frame, ts])
         th.start()
 
@@ -158,6 +98,11 @@ class GUI:
         name = event.widget.cget("text")
 
         self.current_turn_player.move_remaining -= 1
+        if self.current_turn_player.move_remaining == 0:
+            print("Move count used up for ", self.current_turn_player)
+            self.search.is_paused = True
+            self.timer_frame.config(text="GAME OVER")
+
         self.root.nametowidget('player1_move_limit').config(
             text=f"Moves Left: {self.current_turn_player.move_remaining}")
 
@@ -225,33 +170,9 @@ class GUI:
         self.root.update()
 
         heuristic1 = Heuristic()
-        heuristic2 = Heuristic2()
 
         t1 = threading.Thread(target=self.ai_search, args=[AI_color, heuristic1])
         t1.start()
-
-        # while True:
-        #     search2 = Search()
-        #     seconds = time.time()
-        #     ai_move2 = search2.ab_search(self.abalone.board, "Black", heuristic1)
-        #     seconds = abs(seconds - time.time())
-        #     self.abalone.board.update_board(ai_move2)
-        #     self.root.nametowidget('player1_history').insert(END, f"{ai_move2}\t{seconds:.4f}\n")
-        #     self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
-        #     self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
-        #     self.apply_board()
-        #     self.root.update()
-        #
-        #     search = Search()
-        #     seconds = time.time()
-        #     ai_move = search.ab_search(self.abalone.board, "White", heuristic2)
-        #     seconds = abs(seconds - time.time())
-        #     self.abalone.board.update_board(ai_move)
-        #     self.root.nametowidget('player2_history').insert(END, f"{ai_move}\t{seconds:.4f}\n")
-        #     self.root.nametowidget('player1_score').config(text=self.abalone.board.blue_score)
-        #     self.root.nametowidget('player2_score').config(text=self.abalone.board.red_score)
-        #     self.apply_board()
-        #     self.root.update()
 
     def ai_search(self, color: StringVar, heuristic):
         self.ai_search_fast_enough = True
@@ -330,13 +251,8 @@ class GUI:
         self.current_turn_player = self.abalone.players["Black"]
         self.non_current_turn_player = self.abalone.players["White"]
 
-        # if type(self.current_turn_player) == player.AIPlayer:
-        #     self.time_limit = self.current_turn_player.turn_limit
-        # else:
-        #     self.time_limit = self.non_current_turn_player.turn_limit
         self.time_limit = self.current_turn_player.turn_limit
 
-        # self.turn_limit = self.current_turn_player.move_remaining
         new_text = f"Moves Left: {self.current_turn_player.move_remaining}"
         self.root.nametowidget('player1_move_limit').config(text=new_text)
         self.root.nametowidget('player2_move_limit').config(text=new_text)
@@ -377,11 +293,6 @@ class GUI:
 
     def start_settings(self):
         SettingsMenu(self.root, self.abalone).display()
-
-        # topLevel = tk.Toplevel()
-        # SettingsMenu(topLevel, self.abalone).display()
-        # topLevel.wait_window()
-        # print("Dont waiting for window")
 
     def pause_game(self):
         if not self.pause_button_on:
@@ -438,8 +349,8 @@ class GUI:
         self.timer_frame = Label(self.root, text="TimerFrame", height=5, width=20, name="timer_frame")
         self.timer_frame.place(x=600, y=30)
 
-        start_game_button = Button(self.root, text="Start Game - starts timer", padx=2,
-                                   command=self.start_game)
+        start_game_button = Button(self.root, text="Start Game", padx=2,
+                                   command=self.start_game, width=18)
         start_game_button.place(x=600, y=400)
 
         settings_game_button = Button(self.root, text="Settings", padx=2, command=self.start_settings, width=18)
@@ -655,7 +566,6 @@ class GUI:
             ("I", 9): buttonI9,
         }
 
-        # self.abalone = Abalone()
         self.apply_board()
 
         buttonNE = Button(self.root, text="NORTH-EAST", height=5, width=10)

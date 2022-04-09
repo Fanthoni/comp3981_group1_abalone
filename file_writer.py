@@ -38,7 +38,3 @@ class FileOperator:
     def get_board_file_name(input_file_name: str):
         dot_index = input_file_name.index('.')
         return f"testOutput/{input_file_name[:dot_index]}.board"
-
-    # @staticmethod
-    # def _get_file_name(file_name: str):
-    #     while

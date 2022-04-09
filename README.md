@@ -1,73 +1,31 @@
 # Abalone - Group 1
 ### Setting Up and Running the Program
-This abalone program can be executed wherever emojis can be printed properly. Using Windows Terminal or PyCharm IDE is recommended.
-
-Note: The Windows default console host (conhost.exe) does not support printing Unicode characters. However, the new Windows Terminal does.
+Using Windows Terminal or PyCharm IDE is recommended.
 
 First, make sure to have python installed on the machine (version 3.10 is the latest python version when this README file is written).
-Then simply go to the root project directory and type 
+Then simply go to the root project directory and type:
 
 ```text
-python abalone_UI.py
+python gui.py
 ```
 
-Abalone Game Menu will show
-```text
----Main Menu---
-1. Start Game
-2. Set Starting Positions
-3. Set Game Mode
-4. Set Player Colors
-5. Set Turn Time
-6. Set Turn Limit
-7. Exit
-Input: 
-```
-
-Starting the game will show the current board like so
-```text
-          I 🟥 🟥 🟥 🟥 🟥 
-        H 🟥 🟥 🟥 🟥 🟥 🟥 
-      G 🟩 🟩 🟥 🟥 🟥 🟩 🟩 
-     F 🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩 
-   E 🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩 
-     D 🟩 🟩 🟩 🟩 🟩 🟩 🟩 🟩 9
-      C 🟩 🟩 🟦 🟦 🟦 🟩 🟩 8
-        B 🟦 🟦 🟦 🟦 🟦 🟦 7
-          A 🟦 🟦 🟦 🟦 🟦 6
-              1  2  3  4  5
-
----Player 1---
-Time remaining: X
-Moves remaining: X
-1. Make Move
-2. View Previous Moves
-3. Pause Game
-4. Stop Game
-Input: 
-```
+Abalone Tkinter GUI game board will appear.
 
 #### Playing the Game
-When the program first run, the default configuration will be set to AI (Blue) vs Human (Red).\
-in this context Blue == Black and White == Red, therefore Blue makes the first move.
+To start playing a game, you must first select the 'settings' button located in the middle of the GUI, and configure 
+the game settings.
+(NOTE: Pressing the 'Start Game' button without selecting the 'settings' button will not result in starting the game)
+    ==> Pressing 'settings' opens up another GUI window with simple radio buttons and text box inputs in order 
+    to configure your next game settings.
+    ==> Once finished setting your game options, select the green 'Apply Game Configuration' to apply changes!
 
-If playing as a human, the console will prompt for a move input to move which pieces of the board\
-to be moved. Here is an example on how to correctly input the move:
+Now, to start your match, simply hit the 'Start Game' button, and the timer will begin running for the 'black' 
+marble player.
 
-```text
-E4,E5,-1,-1
-```
-The above move input will result in a move of E4 and E5 tiles to the South-West. Please\
-refer to the following move directions value.
-
-```text
-    North-West = (1, 0)
-    North-East = (1, 1)
-    West = (0, -1)
-    East = (0, 1)
-    South-West = (-1, -1)
-    South-East = (-1, 0)
-```
+If it is the player's turn, marble movements are made the following way:
+    1) click on the desired marbles to move
+        (NOTE: If you have selected the wrong marbles to move, hit the 'reset' button located bottom-left of the game board GUI interface)
+    2) then select the one of the 'direction' buttons located bottom left of the game board GUI (i.e. NORTHWEST, EAST, ... ) to actuate your marble(s) movement
 
 
 ### Instruction on How to Run State Space Generator
@@ -85,6 +43,11 @@ python abalone.py
 5. Input the file name
 6. The corresponding *Test<#>.move* and *Test<#>.board* file will be generated under the *testOutput* folder
 
+### Last Notes/bugs about current version of program
+    - Letting the timer hit '0' will currently kill the game
+    - Only support Player vs AI, or AI vs Player
+    - Reset button doesn't work well with timer; highly recommend resetting program if wanting to play a new game if
+    wanting to play game with timer functionality
 
 ### Authors
 1. Jason Banh
