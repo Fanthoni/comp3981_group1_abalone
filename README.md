@@ -43,11 +43,6 @@ python abalone.py
 5. Input the file name
 6. The corresponding *Test<#>.move* and *Test<#>.board* file will be generated under the *testOutput* folder
 
-### Last Notes/bugs about current version of program
-    - Only support Player vs AI, or AI vs Player
-    - Reset button doesn't work well with timer; highly recommend resetting program if wanting to play a new game if
-    wanting to play game with timer functionality
-
 ### Authors
 1. Jason Banh
 2. Anson Chan
