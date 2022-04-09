@@ -44,7 +44,6 @@ python abalone.py
 6. The corresponding *Test<#>.move* and *Test<#>.board* file will be generated under the *testOutput* folder
 
 ### Last Notes/bugs about current version of program
-    - Letting the timer hit '0' will currently kill the game
     - Only support Player vs AI, or AI vs Player
     - Reset button doesn't work well with timer; highly recommend resetting program if wanting to play a new game if
     wanting to play game with timer functionality
